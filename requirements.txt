@@ -1,0 +1,11 @@
+pandas
+numpy
+pydantic
+python-dotenv
+streamlit
+google-genai
+openai
+ollama
+fastapi
+uvicorn
+requests

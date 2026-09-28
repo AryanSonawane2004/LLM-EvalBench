@@ -1,0 +1,30 @@
+[project]
+name = "llm-evalbench"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "AryanSonawane2004", email = "aryan.ashsona@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.141.1",
+    "google>=3.0.0",
+    "google-genai>=2.25.0",
+    "numpy>=2.4.6",
+    "ollama>=0.6.2",
+    "openai>=3.19.2",
+    "pandas>=3.0.6",
+    "pydantic>=2.13.5",
+    "python-dotenv>=1.2.3",
+    "requests>=2.34.2",
+    "streamlit>=1.64.0",
+    "uvicorn>=0.54.0",
+]
+
+[project.scripts]
+llm-evalbench = "llm_evalbench:main"
+
+[build-system]
+requires = ["uv_build>=0.12.9,<0.13.0"]
+build-backend = "uv_build"

@@ -1,0 +1,89 @@
+# ============================================================
+# Python
+# ============================================================
+
+__pycache__/
+*.py[cod]
+*.pyo
+
+build/
+dist/
+wheels/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python environment files
+.env
+.env.*
+!.env.example
+
+
+# ============================================================
+# Next.js
+# ============================================================
+
+node_modules/
+.next/
+out/
+
+# Next.js environment files
+dashboard/llm-eval-dashboard/.env.local
+dashboard/llm-eval-dashboard/.env.development.local
+dashboard/llm-eval-dashboard/.env.test.local
+dashboard/llm-eval-dashboard/.env.production.local
+
+
+# ============================================================
+# Logs
+# ============================================================
+
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+
+# ============================================================
+# IDE / Editor
+# ============================================================
+
+.vscode/
+.idea/
+
+
+# ============================================================
+# OS
+# ============================================================
+
+.DS_Store
+Thumbs.db
+
+
+# ============================================================
+# Local / Generated Benchmark Results
+# ============================================================
+
+data/benchmark_*.json
+data/responses_*.jsonl
+data/evaluations_*.jsonl
+data/judge_reliability_results.jsonl
+
+
+# ============================================================
+# Ollama / Large Model Files
+# ============================================================
+
+*.gguf
+*.safetensors
+
+
+# ============================================================
+# Temporary files
+# ============================================================
+
+*.tmp
+*.temp

@@ -1,0 +1,144 @@
+{
+  "model": "qwen3:4b",
+  "judge_model": "gemma:2b",
+  "overall": {
+    "total_evaluations": 20,
+    "mean_score": 0.92,
+    "minimum_score": 0.8,
+    "maximum_score": 1.0
+  },
+  "by_category": {
+    "coding": {
+      "count": 3,
+      "mean_score": 0.9444,
+      "minimum_score": 0.9,
+      "maximum_score": 1.0
+    },
+    "factual_qa": {
+      "count": 4,
+      "mean_score": 0.9583,
+      "minimum_score": 0.9,
+      "maximum_score": 1.0
+    },
+    "instruction_following": {
+      "count": 3,
+      "mean_score": 0.9222,
+      "minimum_score": 0.9,
+      "maximum_score": 0.9333
+    },
+    "mathematics": {
+      "count": 3,
+      "mean_score": 0.9667,
+      "minimum_score": 0.9,
+      "maximum_score": 1.0
+    },
+    "reasoning": {
+      "count": 4,
+      "mean_score": 0.85,
+      "minimum_score": 0.8,
+      "maximum_score": 0.9
+    },
+    "summarization": {
+      "count": 3,
+      "mean_score": 0.8889,
+      "minimum_score": 0.8,
+      "maximum_score": 0.9333
+    }
+  },
+  "by_difficulty": {
+    "easy": {
+      "count": 6,
+      "mean_score": 0.9,
+      "minimum_score": 0.8,
+      "maximum_score": 1.0
+    },
+    "hard": {
+      "count": 6,
+      "mean_score": 0.9166,
+      "minimum_score": 0.8,
+      "maximum_score": 1.0
+    },
+    "medium": {
+      "count": 8,
+      "mean_score": 0.9375,
+      "minimum_score": 0.8,
+      "maximum_score": 1.0
+    }
+  },
+  "by_criterion": {
+    "completeness": {
+      "count": 9,
+      "mean_score": 0.8889,
+      "minimum_score": 0.6,
+      "maximum_score": 1.0
+    },
+    "correctness": {
+      "count": 17,
+      "mean_score": 1.0,
+      "minimum_score": 1.0,
+      "maximum_score": 1.0
+    },
+    "faithfulness": {
+      "count": 3,
+      "mean_score": 1.0,
+      "minimum_score": 1.0,
+      "maximum_score": 1.0
+    },
+    "instruction_following": {
+      "count": 6,
+      "mean_score": 0.8333,
+      "minimum_score": 0.6,
+      "maximum_score": 1.0
+    },
+    "logical_consistency": {
+      "count": 1,
+      "mean_score": 0.6,
+      "minimum_score": 0.6,
+      "maximum_score": 0.6
+    },
+    "reasoning": {
+      "count": 9,
+      "mean_score": 0.8444,
+      "minimum_score": 0.8,
+      "maximum_score": 1.0
+    },
+    "relevance": {
+      "count": 4,
+      "mean_score": 0.9,
+      "minimum_score": 0.8,
+      "maximum_score": 1.0
+    }
+  },
+  "lowest_scoring_questions": [
+    {
+      "id": "reason_003",
+      "category": "reasoning",
+      "difficulty": "medium",
+      "overall_score": 0.8
+    },
+    {
+      "id": "reason_004",
+      "category": "reasoning",
+      "difficulty": "hard",
+      "overall_score": 0.8
+    },
+    {
+      "id": "summary_001",
+      "category": "summarization",
+      "difficulty": "easy",
+      "overall_score": 0.8
+    },
+    {
+      "id": "fact_001",
+      "category": "factual_qa",
+      "difficulty": "easy",
+      "overall_score": 0.9
+    },
+    {
+      "id": "reason_001",
+      "category": "reasoning",
+      "difficulty": "easy",
+      "overall_score": 0.9
+    }
+  ]
+}

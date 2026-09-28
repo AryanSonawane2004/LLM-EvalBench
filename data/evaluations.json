@@ -1,0 +1,336 @@
+{
+  "model": "qwen3:4b",
+  "judge_model": "gemma:2b",
+  "count": 20,
+  "evaluations": [
+    {
+      "id": "fact_001",
+      "category": "factual_qa",
+      "difficulty": "easy",
+      "question": null,
+      "reference_answer": "Canberra.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0,
+        "relevance": 0.8
+      },
+      "overall_score": 0.9,
+      "rationale": "The response correctly identifies Canberra as the capital of Australia, considering its location, historical context, and status as the smallest capital territory."
+    },
+    {
+      "id": "fact_002",
+      "category": "factual_qa",
+      "difficulty": "medium",
+      "question": null,
+      "reference_answer": "Mitochondria primarily produce ATP through cellular respiration, providing usable energy for the cell.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0,
+        "completeness": 0.8,
+        "relevance": 1.0
+      },
+      "overall_score": 0.9333,
+      "rationale": "The response accurately identifies the primary function of mitochondria as ATP production and provides relevant details about the process of aerobic respiration."
+    },
+    {
+      "id": "fact_003",
+      "category": "factual_qa",
+      "difficulty": "medium",
+      "question": null,
+      "reference_answer": "The average-case time complexity is O(1), assuming a well-distributed hash function and a reasonable load factor.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0,
+        "completeness": 1.0
+      },
+      "overall_score": 1.0,
+      "rationale": "This response accurately evaluates the average-case time complexity of searching for a value in a hash table with a well-designed hash function."
+    },
+    {
+      "id": "fact_004",
+      "category": "factual_qa",
+      "difficulty": "hard",
+      "question": null,
+      "reference_answer": "L2 regularization adds a penalty proportional to the squared magnitude of model weights to the objective function. This discourages excessively large weights and can reduce model complexity, improving generalization.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0,
+        "completeness": 1.0,
+        "reasoning": 1.0
+      },
+      "overall_score": 1.0,
+      "rationale": "The response correctly explains the concept of L2 regularization and how it reduces overfitting."
+    },
+    {
+      "id": "reason_001",
+      "category": "reasoning",
+      "difficulty": "easy",
+      "question": null,
+      "reference_answer": "The discounted price is $80. A 10% tax on $80 is $8, so the final price is $88.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0,
+        "reasoning": 0.8
+      },
+      "overall_score": 0.9,
+      "rationale": "The response accurately calculates the final price by applying both the 20% discount and the 10% tax."
+    },
+    {
+      "id": "reason_002",
+      "category": "reasoning",
+      "difficulty": "medium",
+      "question": null,
+      "reference_answer": "There are 12 chickens and 8 cows.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0,
+        "reasoning": 0.8
+      },
+      "overall_score": 0.9,
+      "rationale": "The model correctly identifies the number of chickens and cows by solving a system of equations and checking the resulting values against the given conditions."
+    },
+    {
+      "id": "reason_003",
+      "category": "reasoning",
+      "difficulty": "medium",
+      "question": null,
+      "reference_answer": "Pick a fruit from the box labeled Apples & Oranges. Since every label is wrong, that box cannot contain both fruits. The fruit drawn identifies whether it contains only apples or only oranges, allowing the remaining labels to be determined.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0,
+        "reasoning": 0.8,
+        "completeness": 0.6
+      },
+      "overall_score": 0.8,
+      "rationale": "The response correctly identifies that the box labeled 'Apples & Oranges' should be chosen to determine the correct labels of all three boxes due to the constraints on the labels."
+    },
+    {
+      "id": "reason_004",
+      "category": "reasoning",
+      "difficulty": "hard",
+      "question": null,
+      "reference_answer": "Ravi's case contradicts the claim if the claim is interpreted literally and the facts are accurate. Therefore, at least one of the following must be false: the claim, Ravi's completion of the training, or Ravi's failure of the audit.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0,
+        "reasoning": 0.8,
+        "logical_consistency": 0.6
+      },
+      "overall_score": 0.8,
+      "rationale": "The model correctly identifies that the claim is logically false due to the counterexample provided."
+    },
+    {
+      "id": "math_001",
+      "category": "mathematics",
+      "difficulty": "easy",
+      "question": null,
+      "reference_answer": "408.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0
+      },
+      "overall_score": 1.0,
+      "rationale": "The model correctly breaks down the multiplication using the distributive property and obtains the correct result."
+    },
+    {
+      "id": "math_002",
+      "category": "mathematics",
+      "difficulty": "medium",
+      "question": null,
+      "reference_answer": "x = 6.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0,
+        "reasoning": 1.0
+      },
+      "overall_score": 1.0,
+      "rationale": "The model correctly solves the equation and arrives at the correct solution."
+    },
+    {
+      "id": "math_003",
+      "category": "mathematics",
+      "difficulty": "hard",
+      "question": null,
+      "reference_answer": "There are 15 ordered outcomes where the second roll is greater than the first out of 36 total outcomes, so the probability is 15/36 = 5/12.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0,
+        "reasoning": 0.8
+      },
+      "overall_score": 0.9,
+      "rationale": "The model correctly calculates the probability of the second roll being greater than the first roll by counting the number of favorable outcomes and dividing it by the total number of outcomes."
+    },
+    {
+      "id": "coding_001",
+      "category": "coding",
+      "difficulty": "easy",
+      "question": null,
+      "reference_answer": "3.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0,
+        "reasoning": 0.8
+      },
+      "overall_score": 0.9,
+      "rationale": "The model correctly calculates the length of a set with 3 distinct elements."
+    },
+    {
+      "id": "coding_002",
+      "category": "coding",
+      "difficulty": "medium",
+      "question": null,
+      "reference_answer": "O(log n).",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0,
+        "relevance": 1.0
+      },
+      "overall_score": 1.0,
+      "rationale": "The answer is correct and provides a clear explanation of the time complexity."
+    },
+    {
+      "id": "coding_003",
+      "category": "coding",
+      "difficulty": "hard",
+      "question": null,
+      "reference_answer": "The default list is created once when the function is defined and is reused across calls. Use None as the default value and create a new list inside the function, for example: def add_item(item, items=None): if items is None: items = []; items.append(item); return items.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0,
+        "reasoning": 0.8,
+        "completeness": 1.0
+      },
+      "overall_score": 0.9333,
+      "rationale": "The function creates a shared list and reuses it across calls, leading to the results being the same for all calls. This violates the intended functionality and can lead to unexpected results. To fix this, the function should create a new, empty list **inside the function** when needed, based on the default argument or any additional input values."
+    },
+    {
+      "id": "instruction_001",
+      "category": "instruction_following",
+      "difficulty": "easy",
+      "question": null,
+      "reference_answer": "The response should accurately explain photosynthesis and contain exactly two sentences.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0,
+        "instruction_following": 0.8
+      },
+      "overall_score": 0.9,
+      "rationale": "The response correctly explains the process of photosynthesis and contains two sentences."
+    },
+    {
+      "id": "instruction_002",
+      "category": "instruction_following",
+      "difficulty": "medium",
+      "question": null,
+      "reference_answer": "The response should contain exactly three bullet points, with each bullet describing one valid benefit of unit testing.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0,
+        "instruction_following": 0.8,
+        "completeness": 1.0
+      },
+      "overall_score": 0.9333,
+      "rationale": "This response accurately identifies the three key benefits of unit testing as early bug detection, enhanced code reliability, and confidence during refactoring."
+    },
+    {
+      "id": "instruction_003",
+      "category": "instruction_following",
+      "difficulty": "hard",
+      "question": null,
+      "reference_answer": "The response should accurately explain database indexes, contain exactly three sentences, and must not contain the word 'fast'.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "correctness": 1.0,
+        "instruction_following": 0.8,
+        "completeness": 1.0
+      },
+      "overall_score": 0.9333,
+      "rationale": "The response accurately explains the purpose of database indexes, covers all the required elements, and does not use the prohibited word 'fast'."
+    },
+    {
+      "id": "summary_001",
+      "category": "summarization",
+      "difficulty": "easy",
+      "question": null,
+      "reference_answer": "Machine learning models learn patterns from existing data to make predictions or decisions on new data.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "faithfulness": 1.0,
+        "relevance": 0.8,
+        "instruction_following": 0.6
+      },
+      "overall_score": 0.8,
+      "rationale": "The response accurately defines the concept of machine learning and its main purpose."
+    },
+    {
+      "id": "summary_002",
+      "category": "summarization",
+      "difficulty": "medium",
+      "question": null,
+      "reference_answer": "Overfitting occurs when a model learns training-specific patterns, including noise, that do not generalize to unseen data. It can result in high training performance but substantially poorer validation or test performance.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "faithfulness": 1.0,
+        "completeness": 0.8,
+        "instruction_following": 1.0
+      },
+      "overall_score": 0.9333,
+      "rationale": "The response correctly defines overfitting and provides a clear and concise explanation of its causes and consequences."
+    },
+    {
+      "id": "summary_003",
+      "category": "summarization",
+      "difficulty": "hard",
+      "question": null,
+      "reference_answer": "The response should contain exactly three bullet points covering: RAG combines retrieval with generation; retrieved information is provided as context to the language model; RAG can improve access to external information and reduce hallucinations but remains dependent on retrieval quality.",
+      "criteria": [],
+      "model": "qwen3:4b",
+      "judge_model": "gemma:2b",
+      "scores": {
+        "faithfulness": 1.0,
+        "completeness": 0.8,
+        "instruction_following": 1.0
+      },
+      "overall_score": 0.9333,
+      "rationale": "The response accurately summarizes the main aspects of Retrieval-Augmented Generation (RAG)."
+    }
+  ]
+}
