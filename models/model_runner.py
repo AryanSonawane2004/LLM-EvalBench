@@ -1,408 +1,824 @@
-import ollama
-from typing import Optional, Dict, Any
+# models/model_runner.py
 
+import time
+from typing import Any, Dict, List, Optional
 
-DEFAULT_TEMPERATURE = 0.0
-DEFAULT_NUM_PREDICT = 1024
+import requests
+
+from config import (
+    OPENROUTER_CHAT_URL,
+    OPENROUTER_MODELS_URL,
+    REQUEST_TIMEOUT,
+)
 
 
 # ============================================================
-# OLLAMA MODEL HELPERS
+# CONFIG
 # ============================================================
 
-def get_local_models():
+PROVIDER = "openrouter"
+
+# Retry configuration
+MAX_RETRIES = 3
+INITIAL_BACKOFF_SECONDS = 2.0
+MAX_BACKOFF_SECONDS = 30.0
+
+# Small delay between successful OpenRouter requests.
+# This is especially useful for free models.
+REQUEST_DELAY_SECONDS = 1.0
+
+
+# ============================================================
+# HEADERS
+# ============================================================
+
+def build_headers(api_key: str) -> Dict[str, str]:
+    if not api_key or not api_key.strip():
+        raise PermissionError(
+            "OpenRouter API key is missing."
+        )
+
+    return {
+        "Authorization": f"Bearer {api_key.strip()}",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    }
+
+
+# ============================================================
+# ERROR HELPERS
+# ============================================================
+
+def _extract_error_message(response: requests.Response) -> str:
+    try:
+        data = response.json()
+
+        if isinstance(data, dict):
+            error = data.get("error")
+
+            if isinstance(error, dict):
+                message = error.get("message")
+
+                if message:
+                    return str(message)
+
+            if isinstance(error, str):
+                return error
+
+            detail = data.get("detail")
+
+            if detail:
+                return str(detail)
+
+    except Exception:
+        pass
+
+    text = response.text.strip()
+
+    if text:
+        return text[:1000]
+
+    return f"HTTP {response.status_code}"
+
+def _is_non_retryable_rate_limit(message: str) -> bool:
+    """Return True when OpenRouter indicates a quota that won't recover by waiting."""
+    if not message:
+        return False
+
+    message_lower = message.lower()
+
+    non_retryable_markers = [
+        "free-models-per-day",
+        "daily limit",
+        "daily quota",
+        "quota exceeded",
+    ]
+
+    return any(marker in message_lower for marker in non_retryable_markers)
+
+def _is_rate_limit(response: requests.Response) -> bool:
+    return response.status_code == 429
+
+
+def _retry_delay(
+    response: requests.Response,
+    attempt: int,
+) -> float:
     """
-    Return the exact model names installed in Ollama.
-    Example:
-        ["qwen3:4b", "gemma:7b"]
+    Determine retry delay.
+
+    Prefer Retry-After when OpenRouter provides it.
+    Otherwise use exponential backoff.
     """
+
+    retry_after = response.headers.get(
+        "Retry-After"
+    )
+
+    if retry_after:
+        try:
+            delay = float(retry_after)
+
+            return min(
+                max(delay, 0.0),
+                MAX_BACKOFF_SECONDS,
+            )
+
+        except ValueError:
+            pass
+
+    delay = INITIAL_BACKOFF_SECONDS * (
+        2 ** attempt
+    )
+
+    return min(
+        delay,
+        MAX_BACKOFF_SECONDS,
+    )
+
+
+def _raise_openrouter_error(
+    response: requests.Response,
+) -> None:
+
+    message = _extract_error_message(
+        response
+    )
+
+    status = response.status_code
+
+    if status in (401, 403):
+        raise PermissionError(
+            "OpenRouter API key is invalid, "
+            "expired, or does not have permission "
+            "to access this resource."
+        )
+
+    if status == 402:
+        raise RuntimeError(
+            "Insufficient OpenRouter credits. "
+            "The selected model requires credits "
+            "or the account has insufficient balance."
+        )
+
+    if status == 429:
+        raise RuntimeError(
+            f"OpenRouter rate limit exceeded: "
+            f"{message}"
+        )
+
+    if status == 408:
+        raise TimeoutError(
+            f"OpenRouter request timed out: "
+            f"{message}"
+        )
+
+    if 500 <= status < 600:
+        raise RuntimeError(
+            f"OpenRouter server error "
+            f"({status}): {message}"
+        )
+
+    raise RuntimeError(
+        f"OpenRouter API error "
+        f"({status}): {message}"
+    )
+
+
+# ============================================================
+# RESPONSE HANDLING
+# ============================================================
+
+def _handle_response(
+    response: requests.Response,
+) -> Dict[str, Any]:
+
+    if not response.ok:
+        _raise_openrouter_error(
+            response
+        )
 
     try:
-        result = ollama.list()
-    except Exception as exc:
+        return response.json()
+
+    except ValueError as exc:
         raise RuntimeError(
-            f"Could not connect to Ollama: {exc}"
+            "OpenRouter returned invalid JSON."
         ) from exc
 
-    models = []
 
-    for model in result.get("models", []):
-        name = model.get("model") or model.get("name")
+# ============================================================
+# MODEL NORMALIZATION
+# ============================================================
 
-        if name:
-            models.append(name)
+def _normalize_model(
+    model: Dict[str, Any],
+) -> Dict[str, Any]:
+
+    model_id = (
+        model.get("id")
+        or model.get("model")
+        or ""
+    )
+
+    architecture = (
+        model.get("architecture")
+        or {}
+    )
+
+    input_modalities = (
+        architecture.get(
+            "input_modalities",
+            [],
+        )
+        or []
+    )
+
+    output_modalities = (
+        architecture.get(
+            "output_modalities",
+            [],
+        )
+        or []
+    )
+
+    supported_parameters = (
+        model.get(
+            "supported_parameters",
+            [],
+        )
+        or []
+    )
+
+    benchmark_compatible = (
+        "text" in input_modalities
+        and "text" in output_modalities
+    )
+
+    pricing = model.get(
+        "pricing",
+        {},
+    ) or {}
+
+    return {
+        "id": model_id,
+        "name": (
+            model.get("name")
+            or model_id
+        ),
+        "provider": PROVIDER,
+        "capabilities": (
+            ["text_generation"]
+            if benchmark_compatible
+            else []
+        ),
+        "benchmark_compatible": (
+            benchmark_compatible
+        ),
+        "input_modalities": (
+            input_modalities
+        ),
+        "output_modalities": (
+            output_modalities
+        ),
+        "supported_parameters": (
+            supported_parameters
+        ),
+        "context_length": (
+            model.get("context_length")
+        ),
+        "max_completion_tokens": (
+            model.get(
+                "max_completion_tokens"
+            )
+        ),
+        "pricing": {
+            "prompt": pricing.get(
+                "prompt"
+            ),
+            "completion": pricing.get(
+                "completion"
+            ),
+        },
+    }
+
+
+# ============================================================
+# LIST MODELS
+# ============================================================
+
+def list_models(
+    api_key: str,
+) -> List[Dict[str, Any]]:
+
+    response = requests.get(
+        OPENROUTER_MODELS_URL,
+        headers=build_headers(
+            api_key
+        ),
+        timeout=REQUEST_TIMEOUT,
+    )
+
+    data = _handle_response(
+        response
+    )
+
+    raw_models = data.get(
+        "data",
+        [],
+    )
+
+    models = [
+        _normalize_model(model)
+        for model in raw_models
+    ]
+
+    # Benchmark-compatible models first.
+    models.sort(
+        key=lambda item: (
+            not item[
+                "benchmark_compatible"
+            ],
+            item["name"].lower(),
+        )
+    )
 
     return models
 
 
-def resolve_model_name(model_name: str) -> str:
-    """
-    Resolve a user/catalog model name to the exact model
-    name registered in the local Ollama installation.
+# ============================================================
+# VERIFY API KEY
+# ============================================================
 
-    Examples:
-
-        qwen3
-            -> qwen3:4b
-
-        qwen3:4b
-            -> qwen3:4b
-
-        gemma:7b
-            -> gemma:7b
-    """
-
-    if not model_name:
-        raise ValueError("model_name cannot be empty.")
-
-    requested = model_name.strip().lower()
-
-    installed_models = get_local_models()
-
-    # --------------------------------------------------------
-    # 1. Exact match
-    # --------------------------------------------------------
-
-    for installed in installed_models:
-
-        if installed.lower() == requested:
-            return installed
-
-    # --------------------------------------------------------
-    # 2. Base-name match
-    # --------------------------------------------------------
-
-    requested_base = requested.split(":", 1)[0]
-
-    candidates = []
-
-    for installed in installed_models:
-
-        installed_lower = installed.lower()
-        installed_base = installed_lower.split(":", 1)[0]
-
-        if installed_base == requested_base:
-            candidates.append(installed)
-
-    if candidates:
-
-        # Prefer :latest if available
-        for candidate in candidates:
-            if candidate.lower() == f"{requested_base}:latest":
-                return candidate
-
-        # Otherwise use the first installed variant
-        return candidates[0]
-
-    # --------------------------------------------------------
-    # 3. Not installed
-    # --------------------------------------------------------
-
-    return model_name
-
-
-def is_model_installed(model_name: str) -> bool:
-    """
-    Check whether the requested model or one of its exact
-    installed variants exists locally.
-    """
-
-    resolved = resolve_model_name(model_name)
-
-    installed_models = get_local_models()
-
-    return any(
-        installed.lower() == resolved.lower()
-        for installed in installed_models
-    )
-
-
-def ensure_model_available(model_name: str) -> str:
-    """
-    Ensure the model exists locally.
-
-    Returns the exact Ollama model name that should be used.
-    """
-
-    if not model_name:
-        raise ValueError("model_name cannot be empty.")
-
-    resolved = resolve_model_name(model_name)
-
-    # Already installed
-    if resolved != model_name or is_model_installed(model_name):
-
-        print(
-            f"[Model Runner] {model_name} resolved to "
-            f"{resolved}."
-        )
-
-        return resolved
-
-    # --------------------------------------------------------
-    # Model is not installed
-    # --------------------------------------------------------
-
-    print(
-        f"[Model Runner] {model_name} is not installed."
-    )
-
-    print(
-        f"[Model Runner] Pulling {model_name}..."
-    )
+def verify_api_key(
+    api_key: str,
+) -> Dict[str, Any]:
 
     try:
-        ollama.pull(model_name)
+        models = list_models(
+            api_key
+        )
+
+        benchmark_models = [
+            model
+            for model in models
+            if model.get(
+                "benchmark_compatible",
+                False,
+            )
+        ]
+
+        return {
+            "verified": True,
+            "provider": PROVIDER,
+            "model_count": len(
+                models
+            ),
+            "benchmark_model_count": len(
+                benchmark_models
+            ),
+        }
+
+    except PermissionError:
+        return {
+            "verified": False,
+            "provider": PROVIDER,
+            "error": (
+                "Invalid or unauthorized "
+                "OpenRouter API key."
+            ),
+        }
 
     except Exception as exc:
-        raise RuntimeError(
-            f"Failed to pull model '{model_name}': {exc}"
-        ) from exc
-
-    print(
-        f"[Model Runner] Successfully pulled "
-        f"{model_name}."
-    )
-
-    # Resolve again after pull
-    resolved = resolve_model_name(model_name)
-
-    return resolved
+        return {
+            "verified": False,
+            "provider": PROVIDER,
+            "error": str(exc),
+        }
 
 
 # ============================================================
-# MODEL EXECUTION
+# GET MODEL
+# ============================================================
+
+def get_model(
+    model: str,
+    api_key: str,
+) -> Dict[str, Any]:
+
+    models = list_models(
+        api_key
+    )
+
+    target = model.strip().lower()
+
+    for item in models:
+
+        if item["id"].lower() == target:
+            return item
+
+    raise ValueError(
+        f"OpenRouter model '{model}' "
+        f"was not found in the current catalog."
+    )
+
+
+# ============================================================
+# VALIDATE MODEL
+# ============================================================
+
+def validate_model(
+    model: str,
+    api_key: str,
+    require_benchmark_compatible: bool = True,
+) -> Dict[str, Any]:
+
+    model_info = get_model(
+        model,
+        api_key,
+    )
+
+    if (
+        require_benchmark_compatible
+        and not model_info.get(
+            "benchmark_compatible",
+            False,
+        )
+    ):
+        raise ValueError(
+            f"Model '{model}' is not compatible "
+            f"with text-to-text benchmarking."
+        )
+
+    return model_info
+
+
+# ============================================================
+# MESSAGES
+# ============================================================
+
+def _build_messages(
+    prompt: str,
+    system_prompt: Optional[str] = None,
+) -> List[Dict[str, str]]:
+
+    messages = []
+
+    if system_prompt:
+        messages.append(
+            {
+                "role": "system",
+                "content": system_prompt,
+            }
+        )
+
+    messages.append(
+        {
+            "role": "user",
+            "content": prompt,
+        }
+    )
+
+    return messages
+
+
+# ============================================================
+# OPENROUTER CHAT REQUEST
+# ============================================================
+
+def _chat_completion(
+    model: str,
+    messages: List[Dict[str, str]],
+    api_key: str,
+    temperature: float,
+    max_tokens: int,
+    response_format: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+
+    payload = {
+        "model": model,
+        "messages": messages,
+        "temperature": temperature,
+        "max_tokens": max_tokens,
+    }
+
+    if response_format is not None:
+        payload["response_format"] = response_format
+
+    last_error = None
+
+    for attempt in range(
+        MAX_RETRIES + 1
+    ):
+
+        try:
+
+            response = requests.post(
+                OPENROUTER_CHAT_URL,
+                headers=build_headers(
+                    api_key
+                ),
+                json=payload,
+                timeout=REQUEST_TIMEOUT,
+            )
+
+            if response.ok:
+
+                if (
+                    REQUEST_DELAY_SECONDS
+                    > 0
+                ):
+                    time.sleep(
+                        REQUEST_DELAY_SECONDS
+                    )
+
+                return _handle_response(
+                    response
+                )
+
+            # ------------------------------------------------
+            # RATE LIMIT
+            # ------------------------------------------------
+
+            if _is_rate_limit(response):
+
+                last_error = _extract_error_message(
+                    response
+                )
+
+                # Permanent quota/rate-limit errors should not be retried.
+                if _is_non_retryable_rate_limit(
+                    last_error
+                ):
+                    raise RuntimeError(
+                        "OpenRouter rate limit exceeded: "
+                        f"{last_error}"
+                    )
+
+                # Temporary rate limit: retry with exponential backoff.
+                if attempt >= MAX_RETRIES:
+                    raise RuntimeError(
+                        "OpenRouter rate limit "
+                        f"persisted after "
+                        f"{MAX_RETRIES} retries: "
+                        f"{last_error}"
+                    )
+
+                delay = _retry_delay(
+                    response,
+                    attempt,
+                )
+
+                print(
+                    "[OpenRouter] "
+                    f"Rate limited. "
+                    f"Retry {attempt + 1}/"
+                    f"{MAX_RETRIES} "
+                    f"in {delay:.1f}s."
+                )
+
+                time.sleep(delay)
+                continue
+
+            # ------------------------------------------------
+            # NON-RETRYABLE ERROR
+            # ------------------------------------------------
+
+            _raise_openrouter_error(
+                response
+            )
+
+        except (
+            requests.Timeout,
+            requests.ConnectionError,
+        ) as exc:
+
+            last_error = str(exc)
+
+            if attempt >= MAX_RETRIES:
+                raise TimeoutError(
+                    "OpenRouter request failed "
+                    f"after {MAX_RETRIES} retries: "
+                    f"{exc}"
+                ) from exc
+
+            delay = min(
+                INITIAL_BACKOFF_SECONDS
+                * (2 ** attempt),
+                MAX_BACKOFF_SECONDS,
+            )
+
+            print(
+                "[OpenRouter] "
+                f"Network/timeout error. "
+                f"Retry {attempt + 1}/"
+                f"{MAX_RETRIES} "
+                f"in {delay:.1f}s."
+            )
+
+            time.sleep(
+                delay
+            )
+
+    raise RuntimeError(
+        "OpenRouter request failed: "
+        f"{last_error}"
+    )
+
+
+# ============================================================
+# RUN MODEL
 # ============================================================
 
 def run_model(
     model: str,
     prompt: str,
+    api_key: str,
     system_prompt: Optional[str] = None,
-    temperature: float = DEFAULT_TEMPERATURE,
-    num_predict: int = DEFAULT_NUM_PREDICT,
-) -> str:
-    """
-    Run a prompt against an Ollama model.
+    temperature: float = 0.0,
+    max_tokens: int = 1024,
+    response_format: Optional[Dict[str, Any]] = None,
+):
 
-    The requested model name is first resolved to the exact
-    model name installed in Ollama.
-    """
-
-    if not model:
-        raise ValueError("model cannot be empty.")
-
-    if not prompt:
-        raise ValueError("prompt cannot be empty.")
-
-    # Resolve exact installed model
-    resolved_model = ensure_model_available(model)
-
-    print(
-        f"[Model Runner] Running model: "
-        f"{resolved_model}"
+    # Validate model before generation.
+    validate_model(
+        model=model,
+        api_key=api_key,
+        require_benchmark_compatible=True,
     )
 
-    messages = []
-
-    if system_prompt:
-        messages.append(
-            {
-                "role": "system",
-                "content": system_prompt,
-            }
-        )
-
-    messages.append(
-        {
-            "role": "user",
-            "content": prompt,
-        }
+    messages = _build_messages(
+        prompt=prompt,
+        system_prompt=system_prompt,
     )
 
-    try:
+    data = _chat_completion(
+        model=model,
+        messages=messages,
+        api_key=api_key,
+        temperature=temperature,
+        max_tokens=max_tokens,
+        response_format=response_format,
+    )
 
-        response = ollama.chat(
-            model=resolved_model,
-            messages=messages,
-            options={
-                "temperature": temperature,
-                "num_predict": num_predict,
-            },
+    choices = data.get(
+        "choices",
+        [],
+    )
+
+    if not choices:
+        raise RuntimeError(
+            "OpenRouter returned no choices."
         )
 
-    except Exception as exc:
+    message = (
+        choices[0].get(
+            "message",
+            {},
+        )
+        or {}
+    )
 
+    content = message.get(
+        "content"
+    )
+
+    if content is None:
         raise RuntimeError(
-            f"Ollama generation failed for "
-            f"'{resolved_model}': {exc}"
-        ) from exc
+            "OpenRouter returned an empty "
+            "response content."
+        )
 
-    try:
+    if not isinstance(
+        content,
+        str,
+    ):
+        content = str(content)
 
-        content = response["message"]["content"]
+    content = content.strip()
 
-    except (
-        KeyError,
-        TypeError,
-    ) as exc:
-
+    if not content:
         raise RuntimeError(
-            "Unexpected Ollama response format."
-        ) from exc
+            "OpenRouter returned an empty "
+            "response."
+        )
 
-    return content.strip()
+    return content
 
 
 # ============================================================
-# DETAILED EXECUTION
+# DETAILED RUN
 # ============================================================
 
 def run_model_detailed(
     model: str,
     prompt: str,
+    api_key: str,
     system_prompt: Optional[str] = None,
-    temperature: float = DEFAULT_TEMPERATURE,
-    num_predict: int = DEFAULT_NUM_PREDICT,
+    temperature: float = 0.0,
+    max_tokens: int = 1024,
 ) -> Dict[str, Any]:
-    """
-    Run a model and return response plus metadata.
-    """
 
-    import time
-
-    if not model:
-        raise ValueError("model cannot be empty.")
-
-    if not prompt:
-        raise ValueError("prompt cannot be empty.")
-
-    resolved_model = ensure_model_available(model)
-
-    print(
-        f"[Model Runner] Running model: "
-        f"{resolved_model}"
+    validate_model(
+        model=model,
+        api_key=api_key,
+        require_benchmark_compatible=True,
     )
 
-    messages = []
-
-    if system_prompt:
-        messages.append(
-            {
-                "role": "system",
-                "content": system_prompt,
-            }
-        )
-
-    messages.append(
-        {
-            "role": "user",
-            "content": prompt,
-        }
+    messages = _build_messages(
+        prompt=prompt,
+        system_prompt=system_prompt,
     )
 
-    start_time = time.perf_counter()
+    data = _chat_completion(
+        model=model,
+        messages=messages,
+        api_key=api_key,
+        temperature=temperature,
+        max_tokens=max_tokens,
+    )
 
-    try:
+    choices = data.get(
+        "choices",
+        [],
+    )
 
-        response = ollama.chat(
-            model=resolved_model,
-            messages=messages,
-            options={
-                "temperature": temperature,
-                "num_predict": num_predict,
-            },
+    if not choices:
+        raise RuntimeError(
+            "OpenRouter returned no choices."
         )
 
-    except Exception as exc:
+    choice = choices[0]
 
+    message = (
+        choice.get(
+            "message",
+            {},
+        )
+        or {}
+    )
+
+    content = message.get(
+        "content"
+    )
+
+    if content is None:
         raise RuntimeError(
-            f"Ollama generation failed for "
-            f"'{resolved_model}': {exc}"
-        ) from exc
+            "OpenRouter returned empty content."
+        )
 
-    latency = time.perf_counter() - start_time
+    if not isinstance(
+        content,
+        str,
+    ):
+        content = str(content)
 
-    try:
+    content = content.strip()
 
-        content = response["message"]["content"]
-
-    except (
-        KeyError,
-        TypeError,
-    ) as exc:
-
+    if not content:
         raise RuntimeError(
-            "Unexpected Ollama response format."
-        ) from exc
+            "OpenRouter returned empty content."
+        )
 
     return {
-        "model": resolved_model,
-        "response": content.strip(),
-        "latency_seconds": round(latency, 3),
-        "prompt_eval_count": response.get(
-            "prompt_eval_count"
+        "content": content,
+        "usage": data.get(
+            "usage"
         ),
-        "eval_count": response.get(
-            "eval_count"
+        "id": data.get(
+            "id"
         ),
-        "total_duration_ns": response.get(
-            "total_duration"
+        "finish_reason": choice.get(
+            "finish_reason"
+        ),
+        "model": data.get(
+            "model",
+            model,
         ),
     }
 
 
 # ============================================================
-# DIRECT TEST
+# TEST
 # ============================================================
 
 if __name__ == "__main__":
 
-    print("=" * 60)
-    print("OLLAMA MODEL RUNNER TEST")
-    print("=" * 60)
+    import os
 
-    print("\nInstalled models:")
+    api_key = os.getenv(
+        "OPENROUTER_API_KEY"
+    )
 
-    for model in get_local_models():
-        print(f"  - {model}")
-
-    print("\nModel resolution:")
-
-    for requested in [
-        "qwen3",
-        "gemma:7b",
-    ]:
-
-        resolved = resolve_model_name(requested)
-
-        print(
-            f"  {requested} -> {resolved}"
+    if not api_key:
+        raise SystemExit(
+            "Set OPENROUTER_API_KEY first."
         )
 
-    print("\nRunning test...\n")
+    result = run_model(
+        model="qwen/qwen3-8b",
+        prompt="What is 2 + 2?",
+        api_key=api_key,
+    )
 
-    try:
-
-        result = run_model_detailed(
-            model="qwen3",
-            prompt="What is the capital of Australia?",
-        )
-
-        print(
-            result["response"]
-        )
-
-        print(
-            f"\nResolved model: "
-            f"{result['model']}"
-        )
-
-        print(
-            f"Latency: "
-            f"{result['latency_seconds']} seconds"
-        )
-
-    except Exception as exc:
-
-        print("\nERROR:")
-        print(exc)
+    print(result)

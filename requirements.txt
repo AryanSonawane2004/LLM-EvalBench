@@ -7,5 +7,5 @@ google-genai
 openai
 ollama
 fastapi
-uvicorn
+uvicorn[standard]
 requests

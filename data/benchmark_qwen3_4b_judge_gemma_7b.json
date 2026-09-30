@@ -1,0 +1,818 @@
+{
+  "summary": {
+    "model": "qwen3:4b",
+    "judge_model": "gemma:7b",
+    "total_questions": 20,
+    "successful_questions": 20,
+    "failed_questions": 0,
+    "scored_questions": 20,
+    "overall_score": 4.59
+  },
+  "results": [
+    {
+      "question_id": "fact_001",
+      "question": "What is the capital of Australia?",
+      "category": "factual_qa",
+      "difficulty": "easy",
+      "source": "custom",
+      "tags": [
+        "geography",
+        "basic_knowledge"
+      ],
+      "reference_answer": "Canberra.",
+      "criteria": [
+        "correctness",
+        "relevance"
+      ],
+      "model_response": "Okay, the user is asking about the capital of Australia. Hmm, this seems like a straightforward geography question, but I should be careful—people often confuse this because Australia's capital is not the largest city or the most obvious place. \n\nFirst, I recall that Canberra is the capital. But wait, why do people get confused? Maybe because Sydney is so much bigger and more famous? Yeah, that's probably it. The user might have heard \"Sydney\" and assumed it's the capital, or they might be testing if I know the difference. \n\nI should explain why it's Canberra—like how it was built specifically to be the capital after the rivalry between Sydney and Melbourne. The user might appreciate that context. Also, I should mention that it's a planned city, not a historic one, to highlight how unusual it is. \n\nThe user seems like a casual learner—maybe a student doing homework, or just someone curious. They didn't give extra context, so I'll keep it simple but add a bit of fun detail to make it memorable. No need for jargon. \n\nOh, and I should double-check: is there any chance they meant something else? Like, Australia has territories, but the capital of the country is definitely Canberra. Yep, confirmed. \n\nI'll structure it: 1) Direct answer (Canberra), 2) Why it's not Sydney (common confusion), 3) Quick history tidbit. That way, it's helpful without overwhelming them. \n\n...Also, no emojis here—too casual for this context. Keep it professional but friendly.\n</think>\n\nThe capital of Australia is **Canberra**.  \n\n### Why is this often confusing?\n- **Sydney** (Australia's largest city) is frequently mistaken for the capital due to its global fame and cultural significance.  \n- **Canberra** was deliberately built in the 1900s as a *new city* to resolve the rivalry between Sydney and Melbourne for the capital. It’s located in the Australian Capital Territory (ACT), a self-governing territory.  \n\n### Key facts:\n- **Established**: 1913 (officially became capital in 1927).  \n- **Design**: Planned by American architect Walter Burley Griffin to be a \"city of the future\" with green spaces and symmetry.  \n- **Population**: ~380,000 (smaller than Sydney or Melbourne).  \n\nThis unique solution ensured political balance between Australia’s two largest cities and avoided the \"capital city\" problem that plagued other nations.  \n\n*So, while Sydney is iconic, Canberra is the official capital!* 🇦🇺",
+      "evaluation": {
+        "overall_score": 5.0,
+        "criteria_scores": {
+          "correctness": {
+            "score": 5,
+            "rationale": "Provides the correct answer (Canberra) and explains the common confusion with Sydney."
+          },
+          "relevance": {
+            "score": 5,
+            "rationale": "Directly addresses the prompt and explains the capital city concept in the context of Australia."
+          }
+        },
+        "overall_rationale": "The candidate model provides a comprehensive and accurate response that satisfies both the correctness and relevance criteria. It clearly explains the capital city concept and resolves the common confusion with Sydney, offering additional historical and factual details.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "fact_002",
+      "question": "What is the primary function of mitochondria in eukaryotic cells?",
+      "category": "factual_qa",
+      "difficulty": "medium",
+      "source": "custom",
+      "tags": [
+        "biology",
+        "cellular_biology"
+      ],
+      "reference_answer": "Mitochondria primarily produce ATP through cellular respiration, providing usable energy for the cell.",
+      "criteria": [
+        "correctness",
+        "completeness",
+        "relevance"
+      ],
+      "model_response": "Okay, the user is asking about the primary function of mitochondria in eukaryotic cells. Let me start by recalling what I know. Mitochondria are often called the powerhouses of the cell. Their main job is producing ATP through cellular respiration. But I should make sure that's accurate.\n\nWait, the user specified eukaryotic cells. That's important because prokaryotes don't have mitochondria. So I need to focus on eukaryotes. The primary function is ATP production. But how exactly? Through oxidative phosphorylation in the inner membrane. Also, the Krebs cycle happens in the matrix. \n\nHmm, the user might be a student studying biology. They probably need a clear, concise answer for an exam or homework. But maybe they also want a bit more context. Like why mitochondria are important beyond just ATP. Do they have other functions? I remember that mitochondria are involved in apoptosis, calcium signaling, and even some immune responses. But the primary function is definitely ATP. \n\nI should check if there's any common confusion. Sometimes people think mitochondria produce all the energy, but actually, glycolysis happens in the cytopl. So mitochondria handle the aerobic part. Also, in some cells like red blood cells, mitochondria aren't present, but the question is about eukaryotic cells in general. \n\nThe user might not know about the structure—inner membrane with cristae, matrix. Explaining that ATP is made via chemiosmosis could be useful. But the question asks for the primary function, so maybe keep it simple. \n\nWait, the answer should emphasize that mitochondria generate ATP for cellular processes. Also, mention that this is crucial for energy-intensive activities. Maybe the user is confused between mitochondria and chloroplasts. Chloroplasts do photosynthesis in plants, but mitochondria are universal in eukaryotes. \n\nI should structure the answer: start with the primary function (ATP production), then briefly explain the process (cellular respiration), and note that it's essential for energy needs. Avoid going too deep into the details unless necessary. \n\nAlso, the user might appreciate knowing why it's called the powerhouse. But the main point is ATP. Let me confirm with reliable sources. From what I remember, textbooks like Alberts' Molecular Biology state mitochondria as ATP producers. \n\nDouble-checking: in eukaryotes, mitochondria are the site of aerobic respiration. Without them, cells can't produce enough ATP aerobically. Anaerobic respiration happens without mitochondria, but the primary function here is aerobic. \n\nSo the answer should be: The primary function is to produce adenosine triphosphate (ATP) through cellular respiration, specifically oxidative phosphorylation. \n\nMake sure to mention it's for energy needs of the cell. Maybe add that this supports cellular activities like movement, synthesis, etc. But the user asked for primary function, so keep it focused. \n\nAlso, note that mitochondria have their own DNA and are thought to have originated from endosymbiotic bacteria. But that's probably beyond the scope. \n\nI think the answer is clear. The user likely needs a straightforward response without too much jargon. So I'll state it concisely, then add a bit of context if needed.\n</think>\n\nThe **primary function of mitochondria in eukaryotic cells is to produce adenosine triphosphate (ATP)** through **cellular respiration**. This process converts biochemical energy from nutrients (like glucose and oxygen) into ATP, which powers essential cellular activities such as metabolism, movement, synthesis of biomolecules, and active transport.\n\n### Key Details:\n1. **How it works**:\n   - **Aerobic respiration** occurs in mitochondria (specifically in the inner membrane and matrix).\n   - The Krebs cycle (citric acid cycle) and electron transport chain (ETC) generate ATP via **oxidative phosphorylation**.\n   - Oxygen acts as the final electron acceptor in the ETC, enabling efficient ATP production.\n\n2. **Why it's critical**:\n   - Mitochondria are the **main sites of ATP generation** in eukaryotes (e.g., muscle cells need ATP for contraction; neurons for signaling).\n   - Without mitochondria, eukaryotic cells cannot sustain aerobic energy production (though anaerobic glycolysis occurs in the cytoplasm, it is less efficient).\n\n3. **Why \"powerhouse of the cell\"?**\n   - This nickname reflects their role in **energy conversion**—mitochondria transform chemical energy from food into usable cellular energy (ATP).\n\n### Important Clarifications:\n- **Not all eukaryotes have mitochondria**: Some eukaryotes (e.g., *Giardia*, certain protists) lack mitochondria or have reduced versions (mitosomes), but in **most eukaryotes** (animals, plants, fungi, protists), mitochondria",
+      "evaluation": {
+        "overall_score": 4.67,
+        "criteria_scores": {
+          "correctness": {
+            "score": 5,
+            "rationale": "Provides a clear and concise explanation of the primary function of mitochondria as ATP producers through cellular respiration."
+          },
+          "completeness": {
+            "score": 4,
+            "rationale": "Addresses the prompt by explaining the primary function of mitochondria in eukaryotic cells and provides additional relevant details about the process and its significance."
+          },
+          "relevance": {
+            "score": 5,
+            "rationale": "Directly addresses the prompt and clearly explains the primary function of mitochondria in the context of eukaryotic cells."
+          }
+        },
+        "overall_rationale": "The candidate model provides a well-reasoned and comprehensive response that accurately explains the primary function of mitochondria in eukaryotic cells, including the process of cellular respiration and its significance for energy production.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "fact_003",
+      "question": "What is the average-case time complexity of searching for a value in a hash table with a well-designed hash function?",
+      "category": "factual_qa",
+      "difficulty": "medium",
+      "source": "custom",
+      "tags": [
+        "computer_science",
+        "algorithms"
+      ],
+      "reference_answer": "The average-case time complexity is O(1), assuming a well-distributed hash function and a reasonable load factor.",
+      "criteria": [
+        "correctness",
+        "completeness"
+      ],
+      "model_response": "Okay, the user is asking about the average-case time complexity for searching in a hash table with a well-designed hash function. Let me start by recalling what I know about hash tables.\n\nFirst, hash tables use a hash function to map keys to indices in an array. The key point here is that a \"well-designed\" hash function means it distributes keys uniformly across the table. So, if the hash function is good, collisions should be rare. \n\nI remember that in the best case, if there are no collisions, the search time is O(1). But the user is asking about average-case, not best or worst. So I need to think about what happens when there are some collisions. \n\nThe average-case time complexity depends on the load factor. The load factor (λ) is the ratio of the number of elements (n) to the table size (m). If λ is low, say less than 1, then collisions are minimal. But for a well-designed hash function, the average number of collisions per key is low. \n\nWait, in open addressing (like linear probing), the average search time is O(1) when the load factor is constant. But if the load factor gets too high, it degrades. However, the question specifies \"well-designed hash function,\" which implies that the hash function minimizes collisions. So, assuming the table is not too full, the average case should be constant time.\n\nI should check standard references. In most textbooks, like CLRS, they mention that with a good hash function and open addressing, the average search time is O(1) when the load factor is less than a constant. But the user might be thinking of a specific scenario. \n\nAlso, the user might be conflating different hash table implementations. For example, separate chaining vs. open addressing. But in both cases, with a good hash function, the average case is O(1). \n\nWait, the key point is that a well-designed hash function ensures that the keys are distributed uniformly. So the probability of collision for a given key is low. In the average case, each key has a small number of collisions. For open addressing, the average number of probes is about 1/(1-λ) when λ is small. But if λ is constant (like 0.7), then it's still O(1). \n\nThe user says \"well-designed hash function,\" so we assume that the hash function is uniform and that the table is managed properly (like resizing when load factor gets high). So the average-case time complexity is O(1). \n\nI should mention that this is under the assumption that the hash function is good and the table isn't too full. If the table is overloaded, it degrades, but the question specifies \"well-designed,\" so we assume optimal conditions. \n\nAlso, the user might be a student learning data structures. They might have heard about worst-case O(n) for hash tables but are confused about average case. So clarifying that with a good hash function, average case is O(1) is important. \n\nLet me structure the answer: start by stating the average-case is O(1), explain why (uniform distribution, minimal collisions), mention load factor, and note that this holds for well-designed hash functions and proper table management. Avoid diving too deep into open addressing vs. chaining unless necessary. \n\nWait, the user might not know about load factor. So I should define it briefly. But the answer should be concise. \n\nAlso, in some contexts, like with perfect hashing, it's O(1) without collisions, but that's a different scenario. The question is about average case with a well-designed hash function, so it's the standard case. \n\nI think the answer is O(1). Let me confirm with a quick mental check: if you have a hash table with m buckets and n elements, and the hash function is uniform, then the expected number of elements per bucket is n/m. For a given key, the probability of collision is about (n/m) * (1/m) for the first collision? Wait, no. The average number of probes in open addressing is (1 + λ + λ² + ... ) / (1 - λ) for small λ, which is approximately 1/(1 - λ). But if λ is constant (like 0.5), then it's O(1). Since the question says \"well-designed,\" we assume λ is kept low enough that the average is constant. \n\nYes, so the answer is O(1). The user might have heard that worst-case is O(n) but average is O(1). So I should emphasize that distinction. \n\nAlso, note that this is for the average case over all possible inputs. So if the input is adversarial, worst-case could be bad, but the question specifies \"average-case,\" so we're talking about typical inputs with a good hash function. \n\nI think that's solid. So the answer is O(1).\n</think>\n\nThe",
+      "evaluation": {
+        "overall_score": 5.0,
+        "criteria_scores": {
+          "correctness": {
+            "score": 5,
+            "rationale": "Provides a clear and concise explanation of the average-case time complexity of searching for a value in a well-designed hash table, correctly stating it as O(1)."
+          },
+          "completeness": {
+            "score": 5,
+            "rationale": "Addresses all the relevant aspects of the prompt, including the definition of a well-designed hash function, load factor, and the impact of collisions on search time complexity."
+          }
+        },
+        "overall_rationale": "The candidate model provides a comprehensive and accurate explanation of the average-case time complexity of searching in a well-designed hash table, demonstrating a deep understanding of the data structure.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "fact_004",
+      "question": "Why can L2 regularization help reduce overfitting in a machine learning model?",
+      "category": "factual_qa",
+      "difficulty": "hard",
+      "source": "custom",
+      "tags": [
+        "machine_learning",
+        "regularization"
+      ],
+      "reference_answer": "L2 regularization adds a penalty proportional to the squared magnitude of model weights to the objective function. This discourages excessively large weights and can reduce model complexity, improving generalization.",
+      "criteria": [
+        "correctness",
+        "completeness",
+        "reasoning"
+      ],
+      "model_response": "Okay, the user is asking why L2 regularization helps reduce overfitting in machine learning models. Let me start by recalling what overfitting is. Overfitting happens when a model learns the training data too well, including noise and random fluctuations, so it performs poorly on new data. L2 regularization, also known as Ridge regression, adds a penalty term to the loss function based on the square of the weights. \n\nHmm, the user might be a student or someone new to machine learning. They probably encountered this in a course or while reading. They want a clear, intuitive explanation without too much math. But they might also need some technical depth if they're implementing models. I should balance simplicity with accuracy.\n\nFirst, I need to explain the core idea: L2 regularization shrinks the weights. By adding a penalty for large weights, it encourages the model to have smaller weights. Smaller weights mean the model is less complex. Why does that reduce overfitting? Because a simpler model generalizes better. \n\nWait, the user might confuse L2 with L1 (Lasso). I should mention the difference briefly but focus on L2. Also, they might wonder how the penalty affects the training process. The loss function becomes the original loss plus lambda times the sum of squared weights. During gradient descent, the weights get updated with this extra term, so the optimization path is constrained.\n\nI should think about the geometric interpretation. The L2 penalty creates a sphere of possible weight vectors. The model finds the point inside this sphere that minimizes the loss. This shrinks weights towards zero but doesn't set them to zero like L1. The trade-off between fitting the data and keeping weights small is key.\n\nAnother angle: overfitting in high-dimensional data. If there are many features, the model might assign large weights to irrelevant features. L2 regularization reduces the magnitude of these weights, making the model less sensitive to noise. \n\nThe user might not know about the role of the regularization strength (lambda). Explaining that lambda controls how strong the penalty is—small lambda means less regularization, large lambda means more. But too much can underfit. \n\nAlso, why squared weights? Because it's differentiable and smooth, which makes optimization easier. L1 uses absolute values, which is not differentiable at zero, leading to sparsity. But for L2, the smoothness helps in gradient descent.\n\nI should structure the answer step by: \n1. Define overfitting and why it's a problem.\n2. Introduce L2 regularization as adding a penalty term.\n3. Explain how the penalty shrinks weights.\n4. Link smaller weights to simpler models and better generalization.\n5. Mention the geometric view and the role of lambda.\n\nMake sure to avoid jargon where possible. Use analogies like \"shrinking weights\" instead of \"penalizing the magnitude.\" Maybe compare to a spring that resists large movements—smaller weights are more stable.\n\nCheck if there's a common misconception. For example, some might think L2 sets weights to zero, but it doesn't; it just shrinks them. L1 does that. Clarify that.\n\nAlso, the user might be confused about why L2 helps specifically. Emphasize that by reducing the model's complexity, it prevents the model from fitting noise. The trade-off between bias and variance: L2 increases bias (simpler model) but reduces variance (less sensitivity to training noise).\n\nReal-world example: In linear regression, if you have a lot of features, L2 regularization prevents the model from overfitting by keeping the coefficients small. Like in finance, where you don't want to overfit to market noise.\n\nWait, the user might need to know when to use L2. But the question is specifically about why it reduces overfitting, so maybe stick to that. \n\nI should also mention that L2 is effective for models where weights are continuous (like neural networks, linear models) but not for sparse data where L1 is better. But again, focus on the why.\n\nPutting it all together: Start with a simple explanation, then dive into the mechanics. Use bullet points in the response for clarity but in the thought process, just outline the key points.\n\nMake sure the answer addresses the \"why\" clearly. The user wants the causal chain: L2 penalty → smaller weights → simpler model → less overfitting. Highlight that the penalty term acts as a constraint that forces the model to generalize better by avoiding high variance.\n</think>\n\nL2 regularization (also known as **Ridge regression**) helps reduce overfitting by **constraining the magnitude of model weights** through a penalty term added to the loss function. Here's a step-by-step explanation of *why* this works, using intuitive and technical insights:\n\n---\n\n### 1. **What is Overfitting?**\n   - Overfitting occurs when a model learns **noise and random fluctuations** in the training data instead of the underlying pattern. This causes the",
+      "evaluation": {
+        "overall_score": 4.67,
+        "criteria_scores": {
+          "correctness": {
+            "score": 5,
+            "rationale": "Provides a clear and accurate explanation of how L2 regularization reduces overfitting by limiting the magnitude of model weights."
+          },
+          "completeness": {
+            "score": 5,
+            "rationale": "Covers various aspects of the topic, including the definition of overfitting, the mechanism of L2 regularization, its impact on model complexity, and its application in linear regression."
+          },
+          "reasoning": {
+            "score": 4,
+            "rationale": "Provides a logical and well-reasoned explanation, using intuitive analogies and technical insights to support the claims made."
+          }
+        },
+        "overall_rationale": "The candidate model provides a well-written and informative response that effectively explains how L2 regularization reduces overfitting in machine learning models. The response demonstrates a deep understanding of the topic and presents a comprehensive and logically sound explanation.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "reason_001",
+      "question": "A store offers a 20% discount on a $100 product and then applies a 10% tax to the discounted price. What is the final price?",
+      "category": "reasoning",
+      "difficulty": "easy",
+      "source": "custom",
+      "tags": [
+        "arithmetic",
+        "multi_step"
+      ],
+      "reference_answer": "The discounted price is $80. A 10% tax on $80 is $8, so the final price is $88.",
+      "criteria": [
+        "correctness",
+        "reasoning"
+      ],
+      "model_response": "Okay, let's see. The problem is about a store that offers a 20% discount on a $100 product and then applies a 10% tax to the discounted price. We need to find the final price. Hmm, let's break this down step by step.\n\nFirst, the original price is $100. They give a 20% discount. So, the discount amount would be 20% of $100. Let me calculate that. 20% of 100 is 0.20 * 100 = $20. So the discounted price is the original price minus the discount, which is 100 - 20 = $80. Wait, that makes sense because 20% off $100 is $20, so you pay $80.\n\nThen, they apply a 10% tax to the discounted price. So the discounted price is $80, and we need to find 10% tax on that. 10% of 100 is 10, but here it's 10% of 80. Let's calculate that. 10% of 80 is 0.10 * 80 = $8. So the tax is $8.\n\nTherefore, the final price is the discounted price plus the tax. So that's $80 + $8 = $88.\n\nWait, let me double-check to make sure I didn't mix up the order. The problem says \"a 20% discount on a $100 product and then applies a 10% tax to the discounted price.\" So yes, first discount, then tax on the discounted price. So the order is correct: discount first, then tax.\n\nLet me verify with another approach. Maybe calculate the discounted price as 80%, since 20% off is 80% of original. So 80% of 100 is 80, which matches. Then tax is 10% on that 80, so 80 * 1.10 = 88. Yep, that's right. So the final price is $88.\n\nI think that's it. Let me just make sure there's no trick here. Sometimes problems might say \"tax is applied before discount\" but the problem states \"a 20% discount on a $100 product and then applies a 10% tax to the discounted price,\" so the tax is applied to the discounted price, so the order is discount first, then tax. So no, it's straightforward. So the answer should be $88.\n</think>\n\nTo determine the final price after applying a 20% discount and then a 10% tax, we follow these steps:\n\n---\n\n### **Step 1: Apply the 20% Discount**\n\nThe original price of the product is **$100**.\n\nA **20% discount** means you pay **80%** of the original price.\n\n$$\n\\text{Discounted Price} = 100 \\times (1 - 0.20) = 100 \\times 0.80 = 80\n$$\n\nSo, after the discount, the price becomes **$80**.\n\n---\n\n### **Step 2: Apply the 10% Tax on the Discounted Price**\n\nNow, a **10% tax** is applied to the discounted price of **$80**.\n\n$$\n\\text{Tax Amount} = 80 \\times 0.10 = 8\n$$\n\n$$\n\\text{Final Price} = 80 + 8 = 88\n$$\n\n---\n\n### ✅ **Final Answer**\n\n$$\n\\boxed{88}\n$$\n\nThe final price after applying the 20% discount and then a 10% tax is **$88**.",
+      "evaluation": {
+        "overall_score": 5.0,
+        "criteria_scores": {
+          "correctness": {
+            "score": 5,
+            "rationale": "The candidate model correctly calculates the discounted price and the tax, and reaches the correct conclusion."
+          },
+          "reasoning": {
+            "score": 5,
+            "rationale": "The candidate model provides a clear and logical step-by-step explanation of the problem-solving process, including detailed calculations and double-checks to ensure accuracy."
+          }
+        },
+        "overall_rationale": "The candidate model demonstrates a strong understanding of the problem and provides a well-reasoned and accurate solution with clear explanations and supporting calculations.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "reason_002",
+      "question": "A farmer has chickens and cows. There are 20 animals and 56 legs in total. How many chickens and cows are there?",
+      "category": "reasoning",
+      "difficulty": "medium",
+      "source": "custom",
+      "tags": [
+        "logic",
+        "constraints"
+      ],
+      "reference_answer": "There are 12 chickens and 8 cows.",
+      "criteria": [
+        "correctness",
+        "reasoning"
+      ],
+      "model_response": "Okay, let's see. The problem is about a farmer who has chickens and cows. There are 20 animals in total, and 56 legs. We need to find how many chickens and cows there are. Hmm, right. So first, I remember that chickens have 2 legs each, and cows have 4 legs each. Let me think about how to set up equations for this.\n\nLet me denote the number of chickens as C and the number of cows as W (maybe W for cows, but sometimes people use C for cows, but maybe better to use different letters to avoid confusion). Wait, actually, let's just use C for chickens and W for cows. So total animals: C + W = 20. That's one equation. Then legs: chickens have 2 legs each, so 2C legs from chickens, cows have 4 legs each, so 4W legs from cows. Total legs are 56, so 2C + 4W = 56. So we have two equations:\n\n1. C + W = 20\n2. 2C + . Wait, 2C + 4W = 56\n\nOkay, so we can solve these two equations. Let's solve the first equation for one variable. Let's say C = 20 - W. Then substitute into the second equation.\n\nSo 2*(20 - W) + 4W = 56. Let's compute that. 2*20 is 40, 2*(-W) is -2W, so 40 - 2W + 4W = 56. Combine like terms: 40 + 2W = 56. Then 2W = 56 - 40 = 16. So W = 8. Then C = 20 - W = 20 - 8 = 12. Let me check if that works. 12 chickens have 24 legs (12*2), 8 cows have 32 legs (8*4). 24 + 32 = 56. Yes, that's correct. Total animals 12 + 8 = 20. Perfect. So there are 12 chickens and 8 cows.\n\nWait, let me make sure I didn't mix up the variables. Sometimes people might confuse cows and chickens, but in this case, cows have 4 legs, chickens 2. So if we had 8 cows, that's 32 legs, 12 chickens is 24 legs, total 56. Yep, that adds up. Let me try another way to check. Suppose all 20 animals were chickens, then legs would be 40. But we have 56 legs, which is 16 more legs than 40. Each cow has 2 more legs than a chicken (4 - 2 = 2). So the number of cows is 16 / 2 = 8. Then chickens are 20 - 8 = 12. That's another way to think about it, which confirms the answer. So that's correct.\n\nYeah, so the answer is 12 chickens and 8 cows.\n</think>\n\nTo solve the problem, we begin by defining variables and setting up equations based on the information provided:\n\n---\n\n### Step 1: Define Variables\n\nLet:\n- $ C $ = number of chickens\n- $ W $ = number of cows\n\nWe are told:\n- Total number of animals: $ C + W = 20 $\n- Total number of legs: $ 2C + 4W = 56 $\n\n---\n\n### Step 2: Solve the System of Equations\n\nFrom the first equation:\n$$\nC = 20 - W\n$$\n\nSubstitute into the second equation:\n$$\n2(20 - W) + 4W = 56\n$$\n$$\n40 - 2W + 4W = 56\n$$\n$$\n40 + 2W = 56\n$$\n$$\n2W = 16 \\Rightarrow W = 8\n$$\n\nNow substitute back to find $ C $:\n$$\nC = 20 - 8 = 12\n$$\n\n---\n\n### Step 3: Verify the Solution\n\n- Number of chickens: 12 → $ 12 \\times 2 = 24 $ legs\n- Number of cows: 8 → $ 8 \\times 4 = 32 $ legs\n- Total legs: $ 24 + 32 = 56 $ ✅\n- Total animals: $ 12 + 8 = 20 $ ✅\n\nAll conditions are satisfied.\n\n---\n\n### Final Answer\n\n$$\n\\boxed{12 \\text{ chickens",
+      "evaluation": {
+        "overall_score": 5.0,
+        "criteria_scores": {
+          "correctness": {
+            "score": 5,
+            "rationale": "The candidate model correctly solves the problem by defining variables, setting up equations, solving the system, and verifying the solution."
+          },
+          "reasoning": {
+            "score": 5,
+            "rationale": "The candidate model provides a detailed and logical step-by-step reasoning process, including explanations for each step and multiple verification checks."
+          }
+        },
+        "overall_rationale": "The candidate model demonstrates a strong understanding of the problem and provides a well-reasoned and logically sound solution with thorough verification checks.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "reason_003",
+      "question": "Three boxes are labeled Apples, Oranges, and Apples & Oranges. Every label is incorrect. You may pick one fruit from one box without looking inside. Which box should you pick from to determine the correct labels of all three boxes?",
+      "category": "reasoning",
+      "difficulty": "medium",
+      "source": "custom",
+      "tags": [
+        "logic",
+        "deduction"
+      ],
+      "reference_answer": "Pick a fruit from the box labeled Apples & Oranges. Since every label is wrong, that box cannot contain both fruits. The fruit drawn identifies whether it contains only apples or only oranges, allowing the remaining labels to be determined.",
+      "criteria": [
+        "correctness",
+        "reasoning",
+        "completeness"
+      ],
+      "model_response": "Okay, let's try to figure out this problem. So, there are three boxes labeled Apples, Oranges, and Apples & Oranges. But every label is incorrect. That means none of the boxes actually have what their labels say. We need to pick one fruit from one box to figure out the correct labels for all three. Hmm, interesting.\n\nFirst, let me recall similar problems. I think this is a classic logic puzzle where the labels are all wrong, so you have to pick a box that's labeled with a combination or something. Wait, the labels are Apples, Oranges, and Apples & Or. Since all labels are incorrect, the box labeled \"Apples\" doesn't have just apples, the box labeled \"Oranges\" doesn't have just oranges, and the box labeled \"Apples & Oranges\" doesn't have both.\n\nSo, the key here is that since all labels are wrong, the box labeled \"Apples & Oranges\" must actually contain only apples or only oranges. Because if it had both, then the label would be correct, but it's supposed to be incorrect. Wait, no, the problem says every label is incorrect. So each label is wrong. So the box labeled \"Apples\" has either Oranges or Apples & Oranges. The box labeled \"Oranges\" has either Apples or Apples & Oranges. The box labeled \"Apples & Oranges\" has either Apples or Oranges.\n\nWait, but the problem says \"three boxes are labeled Apples, Oranges, and Apples & Oranges\". So each box has a label, but all labels are incorrect. So the actual contents are different from the labels.\n\nSo, the idea is that if you pick a fruit from the box labeled \"Apples & Oranges\", since that label is wrong, it must contain only apples or only oranges. Let's say you pick one fruit from that box. If it's an apple, then that box is actually all apples. Then, the box labeled \"Oranges\" must contain both apples and oranges (since its label is wrong), and the box labeled \"Apples\" must contain oranges. Wait, let me think step by step.\n\nLet me denote the boxes as follows:\n\nBox A: labeled \"Apples\" (but actually not apples)\n\nBox B: labeled \"Oranges\" (but actually not oranges)\n\nBox C: labeled \"Apples & Oranges\" (but actually not both)\n\nSince all labels are wrong, Box A has either Oranges or Apples & Oranges.\n\nBox B has either Apples or Apples & Oranges.\n\nBox C has either Apples or Oranges.\n\nNow, the trick here is that if you pick from Box C (the one labeled \"Apples & Oranges\"), since it's labeled incorrectly, it must be only one type. So if you pick one fruit from Box C, you can determine what it actually contains. Let's say you pick an apple. Then Box C is actually all apples. Then, since Box A is labeled \"Apples\" but it's incorrect, Box A must contain Oranges or Apples & Oranges. But Box C is apples, so Box A can't be apples. Wait, Box A is labeled \"Apples\" but it's incorrect, so Box A must have something else. Since Box C is apples, Box A can't be apples, so Box A must have Oranges or Apples & Oranges. But Box B is labeled \"Oranges\" and is incorrect, so Box B must have Apples or Apples & Oranges.\n\nWait, maybe another approach. Let's think about what's possible.\n\nSince all labels are wrong, the box labeled \"Apples & Oranges\" must contain only one type. Because if it contained both, then the label would be correct, but it's supposed to be incorrect. So Box C (labeled \"Apples & Oranges\") has only apples or only oranges.\n\nSo if we pick a fruit from Box C, we can determine what it is. Let's say we pick an apple. Then Box C is all apples. Now, Box A is labeled \"Apples\" but it's incorrect, so Box A can't be apples. Therefore, Box A must be either Oranges or Apples & Oranges. But Box B is labeled \"Oranges\" and is incorrect, so Box B can't be oranges. So Box B must be either Apples or Apples & Oranges. However, Box C is apples, so Box B can't be apples (since Box B is labeled \"Oranges\" and if it were apples, that would be okay? Wait, no. Wait, Box B is labeled \"Oranges\", so if it's actually apples, that's incorrect label, which is allowed. Wait, but Box C is apples, so Box B can't be apples? Wait, no, the problem says that each box has a label, but all labels are",
+      "evaluation": {
+        "overall_score": 4.67,
+        "criteria_scores": {
+          "correctness": {
+            "score": 5,
+            "rationale": "The candidate model correctly identifies the box labeled 'Apples & Oranges' as the key to determining the correct labels of all three boxes."
+          },
+          "reasoning": {
+            "score": 4,
+            "rationale": "The candidate model provides a detailed and logical step-by-step reasoning process, considering various scenarios and constraints to reach the correct conclusion."
+          },
+          "completeness": {
+            "score": 5,
+            "rationale": "The candidate model covers all relevant aspects of the problem, including the analysis of label discrepancies, identification of the key box, and the deduction of the correct labels for all three boxes."
+          }
+        },
+        "overall_rationale": "The candidate model demonstrates a strong understanding of the problem and provides a well-reasoned and comprehensive solution, earning high scores in correctness, reasoning, and completeness.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "reason_004",
+      "question": "A company claims that every employee who completed the security training passed the security audit. Ravi completed the security training but failed the security audit. What can logically be concluded about the company's claim?",
+      "category": "reasoning",
+      "difficulty": "hard",
+      "source": "custom",
+      "tags": [
+        "logical_consistency",
+        "contradiction"
+      ],
+      "reference_answer": "Ravi's case contradicts the claim if the claim is interpreted literally and the facts are accurate. Therefore, at least one of the following must be false: the claim, Ravi's completion of the training, or Ravi's failure of the audit.",
+      "criteria": [
+        "correctness",
+        "reasoning",
+        "logical_consistency"
+      ],
+      "model_response": "Okay, let's try to figure out this logic problem. So the company says that every employee who completed the security training passed the security audit. Then Ravi completed the security training but failed the security audit. We need to see what we can conclude about the company's claim.\n\nHmm, first, let me restate the company's claim in logical terms. If I understand correctly, the claim is: All employees who completed the security training passed the security audit. So in logical terms, that's like saying \"If an employee completed the training, then they passed the audit.\" So in symbols, maybe P → Q, where P is \"completed training\" and Q is \"passed audit.\"\n\nBut Ravi is an example where he completed the training (so P is true) but failed the audit (so Q is false). So R as a counterexample: P is true, Q is false.\n\nWait, the company's claim is a universal statement: For all employees, if they completed training, then they passed the audit. So in formal logic, ∀x (CompletedTraining(x) → PassedAudit(x)). \n\nRavi is an employee who CompletedTraining(Ravi) is true, but PassedAudit(Ravi) is false. So this is a counterexample to the universal statement. Because if there exists even one employee who doesn't satisfy the implication, then the universal statement is false.\n\nSo the conclusion here is that the company's claim is false. Because Ravi's case contradicts the claim. The claim says every employee who completed training passed the audit, but Ravi completed training and didn't pass, so the claim must be incorrect.\n\nWait, but let me make sure. Sometimes in logic problems, there might be nuances. Let me think again.\n\nThe company's claim: Every employee who completed the security training passed the security audit. So it's a universal affirmative: All S are P, where S is employees who completed training, P is passed audit.\n\nRavi is an employee who is in S (completed training) but not in P (failed audit). So this is a case where S and not P. Therefore, the claim \"All S are P\" is false.\n\nYes, so the conclusion is that the company's claim is false.\n\nIs there any other possible conclusion? Like maybe the company's claim is not necessarily true, but the problem says \"what can logically be concluded\". So the answer should be that the company's claim is false.\n\nWait, but let me check if there's a trick here. For example, does the problem say \"every employee who completed the training passed the audit\" or \"every employee passed the audit after completing training\"? But the wording here is \"every employee who completed the security training passed the security audit\". So it's a conditional: if you completed training, then you passed audit.\n\nRavi completed training but failed audit. So the claim is false.\n\nAnother angle: Maybe the company's claim is about the training being sufficient for passing the audit, but Ravi's case shows it's not sufficient. But the conclusion here is that the company's claim is false.\n\nI think that's it. So the answer is that the company's claim is false.\n</think>\n\nThe company's claim is a universal conditional statement: **Every employee who completed the security training passed the security audit**. In logical terms, this can be expressed as:  \n**For all employees $ x $, if $ x $ completed the security training, then $ x $ passed the security audit** (i.e., $ \\forall x \\, (\\text{CompletedTraining}(x) \\rightarrow \\text{PassedAudit}(x)) $).\n\nRavi is an example where:  \n- $ \\text{CompletedTraining}(\\text{Ravi}) $ is **true** (he completed the training),  \n- $ \\text{PassedAudit}(\\text{Ravi}) $ is **false** (he failed the audit).\n\nThis directly contradicts the company's claim. In logic, a universal statement is **false** if there exists **at least one counterexample** that violates the condition. Since Ravi is such a counterexample, the company's claim **must be false**.\n\n---\n\n### Conclusion:\nThe company's claim that **every employee who completed the security training passed the security audit** is **logically false** because Ravi completed the training but failed the audit, which contradicts the claim.\n\n**Answer:** The company's claim is false.",
+      "evaluation": {
+        "overall_score": 5.0,
+        "criteria_scores": {
+          "correctness": {
+            "score": 5,
+            "rationale": "The candidate model correctly concludes that the company's claim is false based on the given premise and counterexample."
+          },
+          "reasoning": {
+            "score": 5,
+            "rationale": "The candidate model provides a detailed and logical breakdown of the claim, identifies the counterexample (Ravi), and demonstrates how it contradicts the claim. The candidate model also considers potential nuances in the claim and offers additional interpretations."
+          },
+          "logical_consistency": {
+            "score": 5,
+            "rationale": "The candidate model's reasoning is internally consistent and logically sound. The steps taken to reach the conclusion are coherent and well-reasoned."
+          }
+        },
+        "overall_rationale": "The candidate model demonstrates a deep understanding of the reasoning criterion and provides a comprehensive and logically sound evaluation of the company's claim. The candidate model's reasoning is well-structured, detailed, and demonstrates a mastery of the logical principles involved.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "math_001",
+      "question": "What is 17 multiplied by 24?",
+      "category": "mathematics",
+      "difficulty": "easy",
+      "source": "custom",
+      "tags": [
+        "arithmetic"
+      ],
+      "reference_answer": "408.",
+      "criteria": [
+        "correctness"
+      ],
+      "model_response": "Okay, let's see. I need to find what 17 multiplied by 24 is. Hmm, multiplication. Maybe I can do this step by step. Let me think. First, I remember that multiplying by 24 is the same as multiplying by 20 and 4, right? Because 24 is 20 + 4. So maybe I can break it down.\n\nLet me try that. 17 times 20 is... 17 times 2 is 34, so 17 times 20 is 340. Then 17 times 4 is... 10 times 4 is 40, 7 times 4 is 28, so 40 + 28 is 68. Then add those two results together: 340 + 68. Let's see, 340 + 60 is 400, and then +8 is 408. So 17 times 24 is 408?\n\nWait, let me check another way to make sure. Maybe using the standard multiplication method. Let's write it out:\n\n  17\n×24\n------\nFirst, multiply 17 by 4: 17×4=68. Then multiply 17 by 20 (since the 2 is in the tens place), which is 17×2=34, so 340. Then add 68 and 340. 68 + 340: 340 + 60 is 400, 400 + 8 is 408. Yep, that's the same as before.\n\nAnother way: 24 times 17. Let's do 24×10=240, 24×7=168. Then 240 + 168. 240 + 100=340, 340 + 68=408. Oh, that works too. So 240 + 168 is 408.\n\nWait, 24×7: 20×7=140, 4×7=28, so 140+28=168. Then 24×10=240. 240+168=408. Yep, that's correct.\n\nLet me verify with a calculator in my head. 17×24. Let's see, 10×24=240, 7×24=168, so 240+168=408. That's the same. So I think 408 is the right answer.\n\nAlternatively, maybe use distributive property: 17×(25-1)=17×25 -17×1. 17×25 is 425 (since 17×100=1700, 1700/4=425), so 425 -17=408. Oh, that's a good check too. 17×25 is 425, minus 17 is 408. Perfect, that confirms it.\n\nSo all methods point to 408. I think that's the answer.\n</think>\n\nTo find the product of $17 \\times 24$, we can use a combination of distributive properties and mental math to ensure accuracy.\n\n---\n\n### Step-by-Step Calculation\n\nWe can break down the multiplication as follows:\n\n$$\n17 \\times 24 = 17 \\times (20 + 4) = (17 \\times 20) + (17 \\times 4)\n$$\n\n- $17 \\times 20 = 340$\n- $17 \\times 4 = 68$\n\nNow add the two results:\n\n$$\n340 + 68 = 408\n$$\n\n---\n\n### Alternative Verification\n\nAnother way to verify is by using the distributive property in reverse:\n\n$$\n17 \\times 24 = 17 \\times (25 - 1) = (17 \\times 25) - (17 \\times 1)\n$$\n\n- $17 \\times 25 = 425$\n- $17 \\times 1 = 17$\n\nSo,\n\n$$\n425 - 17 = 408\n$$\n\nThis confirms the result.\n\n---\n\n### Final Answer\n\n$$\n\\boxed{408}\n$$",
+      "evaluation": {
+        "overall_score": 5.0,
+        "criteria_scores": {
+          "correctness": {
+            "score": 5,
+            "rationale": "The candidate model provides a detailed and accurate step-by-step solution to the mathematical problem, demonstrating a deep understanding of multiplication principles."
+          }
+        },
+        "overall_rationale": "The candidate model demonstrates exceptional understanding of mathematical concepts and provides a detailed, accurate, and well-reasoned solution to the problem. It adheres to the instructions, faithfully represents the provided information, and avoids factual errors or unsupported claims.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "math_002",
+      "question": "If 3x + 7 = 25, what is x?",
+      "category": "mathematics",
+      "difficulty": "medium",
+      "source": "custom",
+      "tags": [
+        "algebra"
+      ],
+      "reference_answer": "x = 6.",
+      "criteria": [
+        "correctness",
+        "reasoning"
+      ],
+      "model_response": "Okay, let's see. I need to solve the equation 3x + 7 = 25 for x. Hmm, how do I do this? Well, I remember from algebra that to solve for a variable, I need to isolate it on one side of the equation. So first, maybe I should get rid of that 7 that's being added to 3x. \n\nRight, the equation is 3x plus 7 equals 25. So to get rid of the 7, I can subtract 7 from both sides. That way, I keep the equation balanced. Let me write that down. If I subtract 7 from both sides, it would be 3x + . . . wait, 3x + 7 - 7 = 25 - 7. So that simplifies to 3x = 18. Because 25 minus 7 is 18. \n\nNow, I have 3x equals 18. To get x by itself, I need to divide both sides by 3. So x = 18 divided by 3. Let me calculate that. 18 divided by 3 is 6. So x should be 6. \n\nWait, let me check to make sure I didn't make a mistake. If I plug x = 6 back into the original equation, does it work? Let's see. 3 times 6 is 18, plus 7 is 25. Yep, 18 + 7 is 25, which matches the right side of the equation. So that checks out. \n\nSo the solution is x = 6. I think that's it. Let me just go through the steps again to be sure. Start with 3x + 7 = 25. Subtract 7 from both sides: 3x = 18. Divide by 3: x = 6. Yep, that's right. No mistakes there. The check works too. So x is 6.\n</think>\n\nTo solve the equation $ 3x + 7 = 25 $ for $ x $, follow these steps:\n\n---\n\n### Step 1: Isolate the term with $ x $\n\nWe want to get rid of the constant $ +7 $ on the left side. To do this, subtract 7 from both sides of the equation:\n\n$$\n3x + 7 - 7 = 25 - 7\n$$\n\n$$\n3x = 18\n$$\n\n---\n\n### Step 2: Solve for $ x $\n\nNow divide both sides of the equation by 3 to isolate $ x $:\n\n$$\nx = \\frac{18}{3}\n$$\n\n$$\nx = 6\n$$\n\n---\n\n### Step 3: Verify the solution\n\nSubstitute $ x = 6 $ back into the original equation to check:\n\n$$\n3(6) + 7 = 18 + 7 = 25\n$$\n\nThis matches the right-hand side of the original equation, so the solution is correct.\n\n---\n\n### Final Answer:\n\n$$\n\\boxed{6}\n$$",
+      "evaluation": {
+        "overall_score": 4.5,
+        "criteria_scores": {
+          "correctness": {
+            "score": 5,
+            "rationale": "The candidate model correctly solves the equation 3x + 7 = 25 for x and arrives at the correct answer of 6."
+          },
+          "reasoning": {
+            "score": 4,
+            "rationale": "The candidate model provides a clear and logical step-by-step solution to the equation, demonstrating a strong understanding of algebraic concepts like isolating variables, solving equations, and checking solutions."
+          }
+        },
+        "overall_rationale": "The candidate model demonstrates both correctness and strong reasoning abilities in solving the provided mathematical equation.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "math_003",
+      "question": "A fair six-sided die is rolled twice. What is the probability that the second roll is greater than the first roll?",
+      "category": "mathematics",
+      "difficulty": "hard",
+      "source": "custom",
+      "tags": [
+        "probability",
+        "conditional_probability"
+      ],
+      "reference_answer": "There are 15 ordered outcomes where the second roll is greater than the first out of 36 total outcomes, so the probability is 15/36 = 5/12.",
+      "criteria": [
+        "correctness",
+        "reasoning"
+      ],
+      "model_response": "Okay, let's try to figure out this probability problem. The question is: A fair six-sided die is rolled twice. What is the probability that the second roll is greater than the first roll? Hmm, so we need to find the probability that when we roll a die twice, the second number is bigger than the first one. \n\nFirst, let's recall that when rolling a die twice, each roll is independent, and each die has 6 sides, so the total number of possible outcomes is 6 * 6 = 36. That makes sense because for each of the first roll (6 possibilities), there are 6 possibilities for the second roll, so 36 total outcomes.\n\nNow, we need to count how many of these outcomes have the second roll greater than the first roll. Let's denote the first roll as X and the second roll as Y. So we need to find the number of (X, Y) pairs where Y > X, with X and Y each being integers from 1 to 6.\n\nLet's list out the possible values for X and Y. For X = 1, Y can be 2, 3,  4, 5, 6. That's 5 possibilities. For X = 2, Y can be 3, 4, 5, 6. That's 4 possibilities. For X = 3, Y can be 4, 5, 6. That's 3 possibilities. For X = 4, Y can be 5, 6. That's 2 possibilities. For X = 5, Y can be 6. That's 1 possibility. For X = 6, Y has to be greater than 6, but since the die only goes up to 6, there are 0 possibilities.\n\nLet me check that again. If X is 1, Y has to be greater than 1, so Y = 2,3,4,5,6: 5 outcomes. X=2, Y>2: 3,4,5,6: 4 outcomes. X=3, Y>3: 4,5,6: 3 outcomes. X=4, Y>4: 5,6: 2 outcomes. X=5, Y>5: 6: 1 outcome. X=6, Y>6: none: 0 outcomes. So total favorable outcomes are 5 + 4 + 3 + 2 + 1 + 0 = 15.\n\nWait, is that right? Let's count them manually to be sure. Let's list all possible pairs where Y > X.\n\nFor X=1:\n(1,2), (1,3), (1,4), (1,5), (1,6) => 5\n\nX=2:\n(2,3), (2,4), (2,5), (2,6) => 4\n\nX=3:\n(3,4), (3,5), (3,6) => 3\n\nX=4:\n(4,5), (4,6) => 2\n\nX=5:\n(5,6) => 1\n\nX=6:\nNone => 0\n\nAdding those up: 5+4=9, 9+3=12, 12+2=14, 14+1=15. Yep, 15 favorable outcomes.\n\nTotal possible outcomes are 36, so the probability is 15/36. Wait, but hold on, is there a case where Y = X? Because in probability problems like this, sometimes people forget about ties. Let's check how many outcomes have Y = X. For X=1, Y=1; X=2, Y=2; ... X=6, Y=6. So that's 6 outcomes where Y = X.\n\nThen, the remaining outcomes are where Y < X. Let's see, how many are those? Total outcomes 36, minus Y = X (6) minus Y > X (15) should be Y < X. Let's check: 36 - 6 - 15 = 15. So Y < X also has 15 outcomes. That makes sense because the problem is symmetric: the probability that Y > X should be equal to the probability that Y < X, since the die is fair and the rolls are independent. So the number of outcomes where Y > X should equal the number where Y < X, and the rest are ties.\n\nLet's verify with Y < X. For Y=1, X has to be 2,3,4,5,6: 5 outcomes. Y=2, X=3,4,5,6: 4 outcomes. Y=3, X=4,5,6: 3 outcomes. Y",
+      "evaluation": {
+        "overall_score": 4.5,
+        "criteria_scores": {
+          "correctness": {
+            "score": 5,
+            "rationale": "The candidate model correctly calculates the number of favorable outcomes (15) and the total possible outcomes (36), leading to the correct probability of 15/36."
+          },
+          "reasoning": {
+            "score": 4,
+            "rationale": "The candidate model provides a clear and logical step-by-step reasoning, including the consideration of potential ties in the outcome. However, the explanation could be more concise and streamlined."
+          }
+        },
+        "overall_rationale": "The candidate model demonstrates a strong understanding of probability concepts and provides a well-reasoned solution to the problem. However, the explanation could be more concise and streamlined.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "coding_001",
+      "question": "In Python, what is the output of print(len(set([1, 2, 2, 3, 3])))?",
+      "category": "coding",
+      "difficulty": "easy",
+      "source": "custom",
+      "tags": [
+        "python",
+        "output_prediction"
+      ],
+      "reference_answer": "3.",
+      "criteria": [
+        "correctness",
+        "reasoning"
+      ],
+      "model_response": "We are given the expression: print(len(set([1, 2, 2, 3, 3])))\n Step-by-step:\n 1. The list inside the set constructor: [1, 2, 2, 3, 3]\n 2. When we convert a list to a set, duplicates are removed and the set contains only unique elements.\n 3. So the set of [1, 2, 2, 3, 3] becomes {1, 2, 3}.\n 4. The length of this set is 3.\n\n Therefore, the output of print(len(set([1, 2, 2, 3, 3]))) is 3.\n\n Let's write the code to verify (though the question is about the output, but for clarity):\n   s = set([1, 2, 2, 3, 3])\n   print(len(s))   # This will print 3\n\n So the answer is 3.\n</think>\n\nThe expression `print(len(set([1, 2, 2, 3, 3])))` in Python evaluates as follows:\n\n1. The list `[1, 2, 2, 3, 3]` contains duplicate values (`2` and `3` appear twice).\n2. When converted to a `set`, duplicates are automatically removed, resulting in the set `{1, 2, 3}`.\n3. The `len()` function returns the number of elements in the set, which is `3`.\n\nThus, the output of the code is **3**.\n\n**Verification with Python**:\n```python\nprint(len(set([1, 2, 2, 3, 3])))  # Output: 3\n```\n\n**Explanation**: Sets in Python only store unique elements, so the duplicates in the list are ignored during conversion. The length of the resulting set is the count of distinct elements.\n\n**Final Answer**: `3`",
+      "evaluation": {
+        "overall_score": 5.0,
+        "criteria_scores": {
+          "correctness": {
+            "score": 5,
+            "rationale": "The candidate model correctly evaluates the length of the set after removing duplicates."
+          },
+          "reasoning": {
+            "score": 5,
+            "rationale": "The candidate model provides a clear and logical step-by-step explanation of the process, including verification with Python code."
+          }
+        },
+        "overall_rationale": "The candidate model demonstrates a thorough understanding of the problem and provides a well-reasoned and accurate solution.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "coding_002",
+      "question": "What is the time complexity of binary search on a sorted array containing n elements?",
+      "category": "coding",
+      "difficulty": "medium",
+      "source": "custom",
+      "tags": [
+        "algorithms",
+        "complexity"
+      ],
+      "reference_answer": "O(log n).",
+      "criteria": [
+        "correctness",
+        "relevance"
+      ],
+      "model_response": "Okay, the user is asking about the time complexity of binary search on a sorted array with n elements. Let me recall what I know about binary search.\n\nFirst, binary search works by repeatedly dividing the search interval in half. It starts with the entire array and compares the target value to the middle element. If they match, it's found. If the target is smaller, it searches the left half; if larger, the right half. This continues until the target is found or the interval is empty.\n\nThe key here is how many steps it takes. Each step reduces the search space by half. So after k steps, the number of elements remaining is n/(2^k). We want to find the smallest k such that n/(2^k) ≤ 1. Solving for k gives k ≥ log₂(n). \n\nWait, but time complexity is usually expressed in terms of big O notation. Since each step is a constant time operation (comparing and halving), the total time is O(log n). \n\nI should check if there are edge cases. For example, what if the array has 1 element? Then k=0, which is log₂(1)=0, so that's fine. For n=2, log₂(2)=1 step. For n=3, it's 2 steps (since after first step, you have 1 or 2 elements left, but binary search might take 2 steps for n=3). Wait, actually, the worst-case time is the ceiling of log₂(n), but in big O terms, it's still O(log n) because constants don't matter.\n\nThe user might be a student learning algorithms. They probably need a clear explanation without too much jargon. Maybe they're preparing for an interview or studying for an exam. I should emphasize why it's logarithmic and not linear or something else.\n\nAlso, I should mention that binary search requires the array to be sorted. The question says \"sorted array,\" so that's covered. If it's not sorted, binary search doesn't work, but the question specifies sorted, so no issue.\n\nLet me think about the steps. For n elements, the maximum number of comparisons is floor(log₂(n)) + 1. But in big O, we ignore the constants and lower-order terms, so it's O(log n). \n\nI should also note that this is the best-case scenario for binary search? No, best case is O(1) if the target is the middle element. But the question is about the time complexity in general, which usually refers to worst-case. The standard answer is O(log n) for worst-case.\n\nThe user might confuse this with linear search, which is O(n). But binary search is much faster for large n. \n\nAnother point: the base of the logarithm. In computer science, it's usually base 2, but since log₂(n) is proportional to log(n) for any base, it's still O(log n). \n\nSo the answer should be O(log n). Let me confirm with a quick example. For n=1000, log₂(1000) ≈ 10, so about 10 steps. That makes sense.\n\nI think that's solid. The user probably just needs the answer with a brief explanation. They might not need the detailed math, but it's good to be precise.\n</think>\n\nThe time complexity of **binary search on a sorted array with `n` elements** is **O(log n)** in the **worst case**. This is the standard and most relevant complexity for practical purposes.\n\n### Why O(log n)?\n- Binary search works by **halving the search space** with each comparison.\n- After `k` comparisons, the remaining search space is at most `n / 2^k`.\n- To reduce the search space to 1 element (the target), we need `k` such that `n / 2^k ≤ 1`, which solves to `k ≥ log₂(n)`.\n- Since each comparison is a constant-time operation (O(1)), the total time is **O(log n)**.\n\n### Key Details:\n1. **Worst-case vs. Best-case**:\n   - **Worst-case**: O(log n) (e.g., target is at the last position of the search space).\n   - **Best-case**: O(1) (e.g., target is the middle element).\n   - *For time complexity analysis, we typically use the worst-case*.\n\n2. **Why not O(n)?**  \n   Binary search is **not linear** (O(n)). Linear search (e.g., scanning from start to end) takes O(n) time, but binary search exploits the sorted property to eliminate half the array each step.\n\n3. **Base of the logarithm**:  \n   The base (2) doesn’t affect the big-O classification. Since `log₂(n) = Θ(log n)` for any base",
+      "evaluation": {
+        "overall_score": 5.0,
+        "criteria_scores": {
+          "correctness": {
+            "score": 5,
+            "rationale": "Provides the correct time complexity of O(log n) for binary search on a sorted array."
+          },
+          "relevance": {
+            "score": 5,
+            "rationale": "Directly addresses the prompt, which asks for the time complexity of binary search on a sorted array."
+          }
+        },
+        "overall_rationale": "The candidate model provides a comprehensive and accurate explanation of the time complexity of binary search on a sorted array, including relevant details and supporting arguments.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "coding_003",
+      "question": "What is wrong with this Python function if the intention is for every call to start with an empty list? Explain how to fix it: def add_item(item, items=[]): items.append(item); return items",
+      "category": "coding",
+      "difficulty": "hard",
+      "source": "custom",
+      "tags": [
+        "python",
+        "debugging",
+        "mutable_objects"
+      ],
+      "reference_answer": "The default list is created once when the function is defined and is reused across calls. Use None as the default value and create a new list inside the function, for example: def add_item(item, items=None): if items is None: items = []; items.append(item); return items.",
+      "criteria": [
+        "correctness",
+        "reasoning",
+        "completeness"
+      ],
+      "model_response": "We are given a function: `def add_item(item, items=[]): items.append(item); return items`\n\n The problem: The intention is for every call to start with an empty list.\n\n However, note that in Python, the default argument `items=[]` is evaluated only once when the function is defined (not every time the function is called). This means that if we call the function multiple times, the same list object is used for the `items` parameter.\n\n Let's see what happens:\n\n First call: \n   items = [] (the default list) -> then we append the first item -> returns [first_item]\n\n Second call:\n   Since the default argument is already set to the list from the first call, we don't create a new list. So we append the second item to the same list -> returns [first_item, second_item]\n\n This is not what we want because we want each call to start with an empty list.\n\n How to fix?\n   We can avoid the default argument being shared by using a default argument that is a new list each time. But note: if we do `items=[]` in the function definition, it's the same list for all calls.\n\n   One common fix is to use a default argument that is a new list created inside the function for the first call, but we have to be careful.\n\n   Alternatively, we can do:\n\n      def add_item(item, items=None):\n          if items is None:\n              items = []\n          items.append(item)\n          return items\n\n   This way, the first time the function is called without a `items` argument, it sets `items` to a new empty list. Subsequent calls with the same `items` argument (if provided) will use that list, but if we want each call to start with an empty list, then we don: want to share the list.\n\n   However, note the problem says: \"every call to start with an empty list\". So we want that for each call, the list is fresh.\n\n   The above fix does exactly that: when the function is called without the `items` argument (which is the default), it creates a new empty list. But note: the problem says the intention is for every call to start with an empty list. So we want that even if we call the function multiple times, each time we get a fresh list.\n\n   But wait: the problem says \"every call\". So if we call the function twice, we want two separate lists.\n\n   The above fix does that.\n\n   However, note: the original function uses `items=[]` as the default. The problem is that the default list is shared.\n\n   Another way: we can also do:\n\n        def add_item(item, items=[]):\n            # But we don't want to share the list, so we create a new list each time?\n            # Actually, we can do: items = items[:] if items else []   -> but that's not the best.\n\n   The standard fix is to use the `if items is None` trick.\n\n   Let me write the fixed function:\n\n        def add_item(item, items=None):\n            if items is None:\n                items = []\n            items.append(item)\n            return items\n\n   Why is this correct?\n        - The first time we call without `items` (which is the default), `items` is `None` -> so we set `items` to a new empty list.\n        - Then we append the item and return.\n\n        Second time: if we call again without `items`, then `items` is `None` again -> so we create a new empty list.\n\n        If we want to pass an existing list (for example, to continue building a list from a previous call), then we pass it. But the problem says: \"every call to start with an empty list\". So we don't want to share. Therefore, we don't want to have the same list for two different calls.\n\n        However, note: the problem says \"every call\" meaning each call should start with an empty list. So we want that the function, when called without an explicit list, starts with an empty list. And if we call it multiple times without passing a list, we get multiple empty lists.\n\n        This fix does that.\n\n   But note: the problem says \"if the intention is for every call to start with an empty list\". So the fix above ensures that.\n\n   Alternatively, we could do:\n\n        def add_item(item, items=[]):\n            # This is the original, but we want to avoid sharing. So we can do:\n            # Instead, we can create a new list each time? But that would be inefficient.\n\n        However, the problem is that the default argument is shared. So the fix is to use the `if items is None` trick.\n\n   Let me test with two calls:\n\n        call1: add_item(1) -> items becomes [1]\n        call2: add_item(2) -> items is None -> so we create [] ->",
+      "evaluation": {
+        "overall_score": 4.67,
+        "criteria_scores": {
+          "correctness": {
+            "score": 5,
+            "rationale": "The candidate model correctly identifies the problem with the default argument being shared and provides a clear explanation of the issue."
+          },
+          "reasoning": {
+            "score": 4,
+            "rationale": "The candidate model provides a logically sound and detailed explanation of the problem and its solution, including multiple possible approaches and their advantages and disadvantages."
+          },
+          "completeness": {
+            "score": 5,
+            "rationale": "The candidate model covers all the important aspects of the problem and offers comprehensive solutions, including the standard fix and an alternative approach."
+          }
+        },
+        "overall_rationale": "The candidate model demonstrates a deep understanding of the problem and offers well-reasoned and complete solutions to start each call with an empty list.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "instruction_001",
+      "question": "Explain photosynthesis in exactly two sentences.",
+      "category": "instruction_following",
+      "difficulty": "easy",
+      "source": "custom",
+      "tags": [
+        "format_constraint",
+        "sentence_count"
+      ],
+      "reference_answer": "The response should accurately explain photosynthesis and contain exactly two sentences.",
+      "criteria": [
+        "correctness",
+        "instruction_following"
+      ],
+      "model_response": "Hmm, the user wants me to explain photosynthesis in exactly two sentences. That's a precise request! They're probably a student or someone who needs a quick, clear summary for studying or teaching purposes. I should make sure my response is accurate and concise without any fluff.\n\nPhotosynthesis is the process where plants use sunlight, water, and carbon dioxide to make food and oxygen. The key points are: it happens in chloroplasts, involves light energy, and produces glucose and oxygen as outputs. I need to distill this into two tight sentences that cover the essentials without going over.\n\nFirst sentence: Focus on the inputs and location. Something like \"Photosynthesis is the process by which plants convert light energy, water, and carbon dioxide into chemical energy (glucose) and oxygen, occurring in the chloroplasts.\" That covers the basics.\n\nSecond sentence: Highlight the output and importance. \"This process is vital for life on Earth as it provides the primary energy source for most ecosystems and releases oxygen into the atmosphere.\" That ties it to real-world significance.\n\nI'll double-check for accuracy—yes, chloroplasts are correct, glucose is the main product, and oxygen is a byproduct. Also, keeping it to exactly two sentences as requested. No more, no less. This should satisfy the user's need for a crisp explanation.\n</think>\n\nPhotosynthesis is the process by which plants convert light energy, water, and carbon dioxide into chemical energy (glucose) and oxygen, occurring in the chloroplasts. This vital process provides the primary energy source for most ecosystems and releases oxygen essential for aerobic life.",
+      "evaluation": {
+        "overall_score": 2.5,
+        "criteria_scores": {
+          "correctness": {
+            "score": 5,
+            "rationale": "The answer correctly explains the process of photosynthesis and its key components."
+          },
+          "instruction_following": {
+            "score": 0,
+            "rationale": "The response failed one or more explicit machine-checkable instruction constraints."
+          }
+        },
+        "overall_rationale": "The candidate model provides a correct explanation of photosynthesis but failed to adhere to the specified sentence count constraint.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": false,
+          "checks": {
+            "sentence_count": {
+              "required": 2,
+              "actual": 19,
+              "passed": false
+            }
+          }
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "instruction_002",
+      "question": "Explain three benefits of unit testing. Return exactly three bullet points, with one benefit per bullet point.",
+      "category": "instruction_following",
+      "difficulty": "medium",
+      "source": "custom",
+      "tags": [
+        "format_constraint",
+        "bullet_points"
+      ],
+      "reference_answer": "The response should contain exactly three bullet points, with each bullet describing one valid benefit of unit testing.",
+      "criteria": [
+        "correctness",
+        "instruction_following",
+        "completeness"
+      ],
+      "model_response": "We are to return exactly three bullet points, one benefit per bullet point.\n The topic: three benefits of unit testing.\n We must be precise and return only three bullet points.\n\n Let's think of three key benefits of unit testing:\n\n 1. Early defect detection: Unit tests help in identifying defects early in the development cycle, which reduces the cost and effort of fixing them later.\n 2. Code reliability and confidence: By having a suite of unit tests, developers can be more confident that their code works as expected, especially when making changes.\n 3. Facilitates refactoring: Unit tests act as a safety net that allows developers to refactor code without breaking existing functionality.\n\n However, note that the problem says \"exactly three bullet points, with one benefit per bullet point\".\n\n Let's write them concisely:\n\n - Early detection of defects, reducing the cost and time to fix issues.\n - Increased confidence in code quality and stability during development.\n - Enables safe refactoring by providing a safety net for code changes.\n\n But we must be precise and avoid extra words. Also, the problem says \"exactly three bullet points\".\n\n Alternatively, we can use:\n\n 1. Early defect identification: Unit tests catch bugs early in the development process, minimizing the cost and effort required to fix them.\n 2. Improved code quality: Regular unit testing leads to more reliable and maintainable code by enforcing consistent design and behavior.\n 3. Safe refactoring: Unit tests allow developers to refactor code without fear of introducing regressions, as the tests verify the expected behavior.\n\n However, the problem says \"return exactly three bullet points\". We have to write in a way that each bullet point is one sentence and exactly one benefit.\n\n Let me try to make them very concise and standard:\n\n Option:\n\n - Early detection of defects, reducing the cost of fixing issues.\n - Enhanced code reliability and stability through consistent validation of individual units.\n - Safe refactoring by ensuring that changes do not break existing functionality.\n\n But note: the problem says \"exactly three bullet points\". We must not have any extra text.\n\n I think the following three are standard and concise:\n\n * Early defect detection\n * Increased code confidence\n * Safe refactoring\n\n However, the problem says \"benefits\", so we should phrase as benefits.\n\n Let me write:\n\n - Early identification of defects, reducing the cost and time to fix them.\n - Greater confidence in code quality and stability during development.\n - Enables safe refactoring without introducing regressions.\n\n But the problem says \"exactly three bullet points\". We have to be careful to have one per bullet.\n\n I'll go with:\n\n - Early defect detection: Identifies issues early, reducing repair costs.\n - Improved code reliability: Ensures each unit functions correctly under specified conditions.\n - Facilitates refactoring: Allows safe code changes without breaking existing functionality.\n\n However, the problem says \"return exactly three bullet points, with one benefit per bullet point\". So we can write:\n\n * Early defect detection\n * Enhanced code reliability\n * Safe refactoring\n\n But that might be too vague.\n\n Alternatively, let's look for three well-known benefits from reliable sources:\n\n 1. Early bug detection\n 2. Code stability\n 3. Refactoring safety\n\n But we need to phrase as benefits.\n\n After thinking, I decide on:\n\n - Early detection of defects, minimizing repair costs and time.\n - Increased confidence in code functionality during development.\n - Safe refactoring by providing a safety net for code changes.\n\n However, the problem says \"exactly three bullet points\". We must not have extra text.\n\n Let me write in a way that each bullet is one sentence and very concise:\n\n * Early defect detection\n * Improved code reliability\n * Safe refactoring\n\n But that might be too short and not clear.\n\n Alternatively, the problem might expect:\n\n - Early bug identification\n - Better code quality\n - Refactoring without fear\n\n But I think the following three are standard and clear:\n\n 1. Early detection of defects (reducing the cost of fixing them)\n 2. Increased confidence in code stability\n 3. Safe refactoring\n\n However, the problem says \"exactly three bullet points\". We have to write in markdown bullet points.\n\n I will write:\n\n- Early defect detection\n- Enhanced code reliability\n- Safe refactoring\n\n But to be more precise and to avoid being too vague, let's write:\n\n- Early identification of defects, reducing the cost and time to fix\n- Increased confidence in code quality and stability\n- Enables safe refactoring without introducing regressions\n\n However, the problem says \"exactly three bullet points\". We must not have extra words.\n\n I think the following three are acceptable and standard:\n\n * Early defect detection\n * Improved code reliability\n * Facilitates safe refactoring\n\n But let's check the requirement: \"Return exactly three bullet points, with one benefit per bullet point.\"\n\n I'll go with:\n\n- Early defect detection\n- Increased code confidence\n- Safe refactoring\n\n However, to be more descriptive without being too long, I choose:\n\n- Early detection of defects",
+      "evaluation": {
+        "overall_score": 5.0,
+        "criteria_scores": {
+          "correctness": {
+            "score": 5,
+            "rationale": "The response correctly identifies three benefits of unit testing."
+          },
+          "instruction_following": {
+            "score": 5,
+            "rationale": "The response adheres to the prompt's requirement of returning exactly three bullet points, each with one benefit."
+          },
+          "completeness": {
+            "score": 5,
+            "rationale": "The response covers all three requested benefits of unit testing."
+          }
+        },
+        "overall_rationale": "The candidate model provides a concise and accurate explanation of three benefits of unit testing, adhering to the prompt's requirements and demonstrating a strong understanding of the topic.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "instruction_003",
+      "question": "Explain what a database index does in exactly three sentences. Do not use the word 'fast'.",
+      "category": "instruction_following",
+      "difficulty": "hard",
+      "source": "custom",
+      "tags": [
+        "format_constraint",
+        "forbidden_word"
+      ],
+      "reference_answer": "The response should accurately explain database indexes, contain exactly three sentences, and must not contain the word 'fast'.",
+      "criteria": [
+        "correctness",
+        "instruction_following",
+        "completeness"
+      ],
+      "model_response": "We are to explain what a database index does in exactly three sentences without using the word 'fast'.\n We must be precise and avoid the word 'fast'. Let's think of alternatives: speed, quicker, rapid, etc. are not allowed. We can use terms like 'efficiently', 'quickly' is also not allowed? The problem says \"do not use the word 'fast'\", so we can use other words but avoid that exact word.\n\n However, note: the problem says \"exactly three sentences\". We have to be careful.\n\n Let's plan:\n\n 1. First sentence: What is an index? (without saying fast)\n 2. Second sentence: How it helps in queries?\n 3. Third sentence: What it does not do? (to avoid common misconceptions) OR what it is made of? But we have to be exactly three sentences.\n\n Alternatively, we can say:\n\n - Database indexes are data structures that allow for quicker data retrieval.\n   But we cannot say \"quicker\" because that implies fast? Actually, the problem says \"do not use the word 'fast'\", so we can say \"quicker\" if we want? But the problem says \"exactly three sentences\" and we must avoid the word 'fast'. However, the problem does not say we cannot use other words that are similar. But to be safe, let's avoid any word that might be too close? The problem says \"do not use the word 'fast'\", so we can use \"quicker\" as long as it's not the word \"fast\". But the problem says \"exactly three sentences\", so we have to be precise.\n\n However, the problem says: \"Do not use the as the word 'fast'\". So we can use other words that are not the word \"fast\". But note: the problem says \"the word 'fast'\", so we can use \"quick\" or \"quicker\" if we want? But the problem doesn't forbid those. However, to be safe and to avoid any implication of speed, we can describe without mentioning speed at all? But that might be hard.\n\n Let me try to write without any reference to speed:\n\n Idea: \n 1. A database index is a structured arrangement of data that facilitates the location of records.\n 2. It provides a mapping from search keys to the corresponding data entries in the database table.\n 3. This structure enables efficient data retrieval without scanning the entire dataset.\n\n But note: the problem says \"do not use the word 'fast'\". We didn't use it. Also, we have three sentences.\n\n However, the problem says \"exactly three sentences\". So we have to write three.\n\n Let me check:\n\n Sentence 1: \"A database index is a structured arrangement of data that facilitates the location of records.\" -> This is a bit vague? Maybe we can be more precise.\n\n Alternatively, we can say:\n\n 1. A database index is a special lookup structure that helps in quickly finding data.\n    -> But we cannot use \"quickly\" because it implies fast? Actually, the problem says \"do not use the word 'fast'\", so \"quickly\" is a different word. However, the problem might be interpreted as avoiding the concept of speed? But the problem says \"the word 'fast'\", so we can use \"quickly\". But to be safe, let's avoid any word that might be associated with speed? The problem doesn't say that, so we can use \"quickly\" as long as we don't use the word \"fast\". However, the problem says \"exactly three sentences\" and we must not use the word \"fast\". So we can use \"quickly\".\n\n But the problem says: \"Do not use the word 'fast'\". So we can use \"quickly\". However, the problem might be testing for the exact word. So let's avoid any word that might be too close? I think the problem means we cannot write the word \"fast\" at all.\n\n Let me try to write without any speed-related words:\n\n 1. A database index is a data structure that organizes information to aid in locating specific records.\n 2. It creates a reference path from the values of a particular column to the corresponding rows in the table.\n 3. This structure allows for the retrieval of data entries without examining every row in the table.\n\n But note: the problem says \"exactly three sentences\". We have three.\n\n However, the problem says \"do not use the word 'fast'\". We didn't use it.\n\n Let me check if we can make it more precise and without any speed implication? The problem doesn't require that, but we are to explain what it does.\n\n Another idea: \n\n 1. A database index is a structure that stores data in a way that enables efficient record location.\n 2. It maps search keys to the physical locations of data entries within the database.\n 3. This mechanism reduces the number of data entries that must be examined during a query.\n\n But note",
+      "evaluation": {
+        "overall_score": 2.33,
+        "criteria_scores": {
+          "correctness": {
+            "score": 4,
+            "rationale": "The response correctly explains the function of a database index without using the word 'fast'."
+          },
+          "instruction_following": {
+            "score": 0,
+            "rationale": "The response failed one or more explicit machine-checkable instruction constraints."
+          },
+          "completeness": {
+            "score": 3,
+            "rationale": "The response provides a concise explanation in three sentences but lacks additional elaboration on the purpose of an index."
+          }
+        },
+        "overall_rationale": "The candidate model demonstrates understanding of the concept of database indexes but fails to adhere to the explicit instruction not to use the word 'fast'. While the response is concise and correct, it lacks additional elaboration beyond the three-sentence limit.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": false,
+          "checks": {
+            "sentence_count": {
+              "required": 3,
+              "actual": 77,
+              "passed": false
+            },
+            "forbidden_words": {
+              "required": [
+                "fast"
+              ],
+              "found": [
+                "fast"
+              ],
+              "passed": false
+            }
+          }
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "summary_001",
+      "question": "Summarize this statement in one sentence: Machine learning models learn patterns from data and use those patterns to make predictions or decisions on new data.",
+      "category": "summarization",
+      "difficulty": "easy",
+      "source": "custom",
+      "tags": [
+        "short_summary",
+        "factual_preservation"
+      ],
+      "reference_answer": "Machine learning models learn patterns from existing data to make predictions or decisions on new data.",
+      "criteria": [
+        "faithfulness",
+        "relevance",
+        "instruction_following"
+      ],
+      "model_response": "Okay, the user wants me to summarize a specific statement about machine learning in one sentence. Let me look at the statement they provided: \"Machine learning models learn patterns from data and use those patterns to make predictions or decisions on new data.\"\n\nHmm, this is a pretty standard definition of machine learning. I need to condense it without losing the key points. The core elements are: \n- Models learn patterns \n- From data \n- Then use those patterns \n- For predictions or decisions \n- On new data \n\nI should check if the user might be a student or someone new to ML. They probably need a concise explanation for study or quick reference. Maybe they're preparing for an exam or writing a report. \n\nThe original sentence is already quite clear, but I can make it tighter. \"Learn patterns from data\" could become \"learn patterns from input data\" to be more precise. \"Make predictions or decisions\" is a bit wordy - \"predict or decide\" is shorter while keeping the meaning. \n\nI recall that in ML terminology, \"new data\" is often called \"unseen data\" but the user's original says \"new data\" so I'll stick with that for accuracy. \n\nLet me try a few versions: \nOption 1: \"Machine learning models learn patterns from data to predict or decide on new data.\" \nThat's 10 words - good. \nOption 2: \"By learning patterns from data, machine learning models make predictions or decisions on new data.\" \nSlightly longer but flows better. \n\nWait, the user said \"one sentence\" so I must keep it to one sentence only. The original statement is 15 words, so my summary should be shorter. \n\nBest version seems to be: \"Machine learning models learn patterns from data to make predictions or decisions on new data.\" \nI removed \"use those patterns\" because \"learn patterns... to make\" implies the usage. \n\nDouble-checking: Does this cover everything? \n- Patterns: yes \n- From data: yes \n- Make predictions/decisions: yes \n- On new data: yes \n\nPerfect. I'll go with that. The user didn't specify technical depth, so this should be sufficient. They probably want something they can use immediately without jargon overload.\n</think>\n\nMachine learning models learn patterns from data to make predictions or decisions on new data.",
+      "evaluation": {
+        "overall_score": 5.0,
+        "criteria_scores": {
+          "faithfulness": {
+            "score": 5,
+            "rationale": "The response accurately represents the supplied information, including the core elements of machine learning: learning patterns from data to make predictions or decisions on new data."
+          },
+          "relevance": {
+            "score": 5,
+            "rationale": "The response directly addresses the prompt by summarizing the given statement in one sentence."
+          },
+          "instruction_following": {
+            "score": 5,
+            "rationale": "The response adheres to the deterministic validation evidence, which confirms that the explicit instruction was followed."
+          }
+        },
+        "overall_rationale": "The candidate model demonstrates a strong understanding of the prompt and provides a concise and accurate one-sentence summary of the given statement about machine learning.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "summary_002",
+      "question": "Summarize in two sentences: Overfitting occurs when a model learns patterns that are specific to its training data, including noise, rather than patterns that generalize to unseen data. A model that overfits may achieve very high training performance while performing substantially worse on validation or test data.",
+      "category": "summarization",
+      "difficulty": "medium",
+      "source": "custom",
+      "tags": [
+        "technical_summary",
+        "factual_preservation"
+      ],
+      "reference_answer": "Overfitting occurs when a model learns training-specific patterns, including noise, that do not generalize to unseen data. It can result in high training performance but substantially poorer validation or test performance.",
+      "criteria": [
+        "faithfulness",
+        "completeness",
+        "instruction_following"
+      ],
+      "model_response": "Hmm, the user wants me to summarize a technical concept about overfitting in just two sentences. They've provided a clear definition: overfitting happens when a model learns noise and specific patterns from training data instead of generalizable patterns, leading to high training performance but poor performance on new data.\n\nI need to be precise and concise here. The key points are: overfitting involves learning noise-specific patterns from training data, and it causes high training accuracy but low validation/test accuracy. I should avoid adding extra information since they want exactly two sentences.\n\nThe user might be a student or professional in machine learning who needs a quick refresher. They probably want this for study notes or to clarify a concept without wading through long explanations. I'll make sure my summary is accurate but simple enough to be useful.\n\nFor the first sentence, I'll focus on what overfitting is: when a model memorizes training data noise instead of general patterns. For the second sentence, I'll highlight the performance contrast - high training vs. poor validation/test results. I'll keep it neutral and technical without fluff.\n\nI should double-check that I'm not missing anything critical. The original mentions \"substantially worse\" which I can convey with \"significantly worse\" to keep it precise. Also, I'll use \"unseen data\" to match their terminology for clarity.\n\nOkay, drafting it now: First sentence defines overfitting, second shows the performance impact. That should cover it in exactly two sentences as requested.\n</think>\n\nOverfitting occurs when a model memorizes noise and specific patterns from its training data instead of learning generalizable patterns. This results in the model achieving high accuracy on training data while performing significantly worse on unseen validation or test data.",
+      "evaluation": {
+        "overall_score": 4.67,
+        "criteria_scores": {
+          "faithfulness": {
+            "score": 5,
+            "rationale": "The response accurately represents the provided definition of overfitting."
+          },
+          "completeness": {
+            "score": 4,
+            "rationale": "The response covers the key points of overfitting: learning noise-specific patterns and the performance discrepancy between training and unseen data."
+          },
+          "instruction_following": {
+            "score": 5,
+            "rationale": "The response adheres to the request for a concise summary in two sentences."
+          }
+        },
+        "overall_rationale": "The candidate model response demonstrates a strong understanding of the concept of overfitting. It accurately summarizes the definition and highlights the performance impact in two concise sentences, adhering to the request.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    },
+    {
+      "question_id": "summary_003",
+      "question": "Summarize the following in exactly three bullet points: Retrieval-Augmented Generation (RAG) combines information retrieval with language generation. A retriever searches an external knowledge source for information relevant to a user's query, and the retrieved information is provided to a language model as context. RAG can help reduce hallucinations and allow models to use information that is not contained in their original training data, but poor retrieval can still lead to incorrect answers.",
+      "category": "summarization",
+      "difficulty": "hard",
+      "source": "custom",
+      "tags": [
+        "technical_summary",
+        "information_prioritization"
+      ],
+      "reference_answer": "The response should contain exactly three bullet points covering: RAG combines retrieval with generation; retrieved information is provided as context to the language model; RAG can improve access to external information and reduce hallucinations but remains dependent on retrieval quality.",
+      "criteria": [
+        "faithfulness",
+        "completeness",
+        "instruction_following"
+      ],
+      "model_response": "Hmm, the user wants me to summarize a specific technical concept about Retrieval-Augmented Generation (RAG) in exactly three bullet points. They've provided a detailed description of RAG that I need to condense precisely.\n\nLooking at the text, I see it explains that RAG combines information retrieval with language generation. The retriever searches external knowledge sources for relevant information to the user's query, and then this retrieved information is given to a language model as context. The benefits mentioned are that R: RAG can reduce hallucinations and allow models to use information not in their original training data. But there's also a caveat that poor retrieval can still lead to incorrect answers.\n\nI need to craft exactly three bullet points that capture all this information without adding or omitting anything. The user specified \"exactly three bullet points,\" so I have to be precise. I'll focus on the core components: what RAG is, how it works, and its key benefits and limitations.\n\nFor the first bullet, I'll define RAG concisely - it's a framework that integrates information retrieval with language generation. For the second bullet, I'll describe the process: the retriever finds relevant external information and feeds it to the language model. For the third bullet, I'll cover both the advantages (reducing hallucinations, accessing new data) and the limitation (poor retrieval causing errors).\n\nI should make sure each bullet is clear and flows well. The user seems knowledgeable about AI concepts, probably a developer or researcher who needs this for quick reference. They might be preparing documentation or studying, so accuracy is crucial. I'll avoid jargon where possible but maintain technical precision.\n\nLet me check if I'm hitting all key points: the combination of retrieval and generation, the retriever's role, the context provision, the hallucination reduction, the external data usage, and the retrieval quality issue. Yes, I can cover all in three tight bullets without exceeding the limit.\n\nOkay, I'll structure it as: 1) Definition and core mechanism, 2) Process flow, 3) Benefits and caveat. That should give exactly what they need - no more, no less.\n</think>\n\n- Retrieval-Augmented Generation (RAG) integrates information retrieval with language generation to enhance model responses.  \n- A retriever searches external knowledge sources for query-relevant information, which is then provided to a language model as contextual input.  \n- RAG reduces hallucinations and enables access to information beyond the model's original training data, but poor retrieval quality can still produce incorrect answers.",
+      "evaluation": {
+        "overall_score": 4.67,
+        "criteria_scores": {
+          "faithfulness": {
+            "score": 4,
+            "rationale": "The response accurately summarizes the core components of RAG, including its combination with retrieval, the role of the retriever, and its benefits."
+          },
+          "completeness": {
+            "score": 5,
+            "rationale": "The response covers all the important aspects of RAG mentioned in the prompt: its definition, process flow, and key advantages and limitations."
+          },
+          "instruction_following": {
+            "score": 5,
+            "rationale": "The candidate model adheres to the request for exactly three bullet points to summarize the provided information."
+          }
+        },
+        "overall_rationale": "The candidate model provides a concise and accurate summary of Retrieval-Augmented Generation, meeting the requested criteria for faithfulness, completeness, and instruction following.",
+        "judge_model": "gemma:7b",
+        "deterministic_checks": {
+          "passed": true,
+          "checks": {}
+        }
+      },
+      "error": null
+    }
+  ]
+}

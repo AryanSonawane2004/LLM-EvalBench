@@ -1,292 +1,429 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
 
-
-// ============================================================
-// TYPES
-// ============================================================
-
-type ModelInfo = {
-  id: string;
-  name: string;
-  provider: string;
-  source: string;
-  installed: boolean;
-  model_type: string;
-  benchmark_compatible: boolean;
-};
-
-type CriterionScore = {
-  score: number;
-  rationale: string;
-};
-
-type Evaluation = {
-  overall_score: number;
-  criteria_scores: Record<string, CriterionScore>;
-  overall_rationale: string;
-  judge_model?: string;
-};
-
-type BenchmarkResult = {
-  summary: {
-    model: string;
-    judge_model: string;
-    total_questions: number;
-    successful_questions: number;
-    failed_questions: number;
-    scored_questions: number;
-    overall_score: number | null;
-  };
-
-  results: Array<{
-    question_id: string;
-    question: string;
-    category: string;
-    difficulty: string;
-    reference_answer: string;
-    criteria: string[];
-    model_response: string | null;
-    evaluation: Evaluation | null;
-    error: string | null;
-  }>;
-};
-
-
-// ============================================================
-// CONFIG
-// ============================================================
-
-const API_BASE_URL =
+const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   "http://127.0.0.1:8000";
 
+type Model = {
+  id: string;
+  name: string;
+  provider: string;
+  capabilities?: string[];
+  benchmark_compatible?: boolean;
+  input_modalities?: string[];
+  output_modalities?: string[];
+  context_length?: number;
+  max_completion_tokens?: number;
+  pricing?: {
+    prompt?: string | null;
+    completion?: string | null;
+  };
+};
 
-// ============================================================
-// PAGE
-// ============================================================
+type BenchmarkResult = {
+  provider?: string;
+  source?: string;
+  model?: string;
+  judge_model?: string;
+
+  status?: "completed" | "partial";
+  overall_score?: number | null;
+  total_questions?: number;
+  successful?: number;
+  failed?: number;
+
+  error_summary?: Record<string, number>;
+
+  by_category?: Record<
+    string,
+    number
+  >;
+
+  by_difficulty?: Record<
+    string,
+    number
+  >;
+
+  by_criterion?: Record<
+    string,
+    number
+  >;
+
+  lowest_scoring?: {
+    id: string;
+    category: string;
+    difficulty: string;
+    score: number;
+  }[];
+
+  error?: string;
+};
+
 
 export default function Home() {
 
-  // ----------------------------------------------------------
-  // MODEL STATE
-  // ----------------------------------------------------------
+  const [
+    apiOnline,
+    setApiOnline,
+  ] = useState(false);
 
-  const [models, setModels] = useState<ModelInfo[]>([]);
+  const [
+    apiKey,
+    setApiKey,
+  ] = useState("");
 
-  const [selectedModel, setSelectedModel] =
-    useState("");
+  const [
+    apiVerified,
+    setApiVerified,
+  ] = useState(false);
 
-  const [selectedJudge, setSelectedJudge] =
-    useState("");
+  const [
+    verifyingKey,
+    setVerifyingKey,
+  ] = useState(false);
+
+  const [
+    verificationError,
+    setVerificationError,
+  ] = useState("");
+
+  const [
+    selectedModel,
+    setSelectedModel,
+  ] = useState("");
+
+  const [
+    selectedJudge,
+    setSelectedJudge,
+  ] = useState("");
+
+  const [
+    models,
+    setModels,
+  ] = useState<Model[]>([]);
+
+  const [
+    modelsLoading,
+    setModelsLoading,
+  ] = useState(false);
+
+  const [
+    benchmarkResult,
+    setBenchmarkResult,
+  ] = useState<
+    BenchmarkResult | null
+  >(null);
+
+  const [
+    benchmarking,
+    setBenchmarking,
+  ] = useState(false);
 
 
-  // ----------------------------------------------------------
-  // SESSION STATE
-  // ----------------------------------------------------------
+  // ==========================================================
+  // HEALTH CHECK
+  // ==========================================================
 
-  const [sessionId, setSessionId] =
-    useState<string | null>(null);
+  useEffect(() => {
+
+    async function checkApi() {
+
+      try {
+
+        const response =
+          await fetch(
+            `${API_URL}/api/health`
+          );
+
+        setApiOnline(
+          response.ok
+        );
+
+      } catch (error) {
+
+        console.error(
+          "API health error:",
+          error
+        );
+
+        setApiOnline(false);
+      }
+    }
+
+    checkApi();
+
+  }, []);
 
 
-  // ----------------------------------------------------------
-  // BENCHMARK STATE
-  // ----------------------------------------------------------
+  // ==========================================================
+  // MODEL NAME
+  // ==========================================================
 
-  const [benchmarkResult, setBenchmarkResult] =
-    useState<BenchmarkResult | null>(null);
+  function formatName(
+    name: string
+  ) {
 
-  const [loading, setLoading] =
-    useState(false);
+    return name
+      .replaceAll(
+        "_",
+        " "
+      )
+      .replace(
+        /\b\w/g,
+        (char) =>
+          char.toUpperCase()
+      );
+  }
 
-  const [loadingModels, setLoadingModels] =
-    useState(true);
 
-  const [error, setError] =
-    useState("");
+  function displayModelName(
+    modelId?: string
+  ) {
 
-  const [status, setStatus] =
-    useState("");
+    if (!modelId) {
+      return "--";
+    }
 
-  const [expandedQuestion, setExpandedQuestion] =
-    useState<string | null>(null);
+    const found =
+      models.find(
+        (model) =>
+          model.id === modelId
+      );
+
+    return (
+      found?.name ||
+      formatName(modelId)
+    );
+  }
+
+
+  // ==========================================================
+  // VERIFY API KEY
+  // ==========================================================
+
+  async function verifyApiKey() {
+
+    if (!apiKey.trim()) {
+
+      setVerificationError(
+        "Enter your OpenRouter API key."
+      );
+
+      return;
+    }
+
+    setVerifyingKey(true);
+
+    setVerificationError("");
+
+    setApiVerified(false);
+
+    setModels([]);
+
+    setSelectedModel("");
+
+    setSelectedJudge("");
+
+    setBenchmarkResult(null);
+
+
+    try {
+
+      const response =
+        await fetch(
+          `${API_URL}/api/verify`,
+          {
+            method: "POST",
+
+            headers: {
+              "X-API-Key":
+                apiKey.trim(),
+            },
+          }
+        );
+
+
+      if (!response.ok) {
+
+        let message =
+          "OpenRouter API key verification failed.";
+
+        try {
+
+          const error =
+            await response.json();
+
+          message =
+            typeof error.detail ===
+            "object"
+              ? error.detail?.error ||
+                message
+              : error.detail ||
+                message;
+
+        } catch {
+          // Keep default.
+        }
+
+        throw new Error(
+          message
+        );
+      }
+
+
+      const result =
+        await response.json();
+
+
+      if (!result.verified) {
+
+        throw new Error(
+          "OpenRouter API key could not be verified."
+        );
+      }
+
+
+      setApiVerified(true);
+
+      await loadModels(
+        apiKey.trim()
+      );
+
+    } catch (error) {
+
+      console.error(
+        "API key verification error:",
+        error
+      );
+
+      setApiVerified(false);
+
+      setVerificationError(
+        error instanceof Error
+          ? error.message
+          : "API key verification failed."
+      );
+
+    } finally {
+
+      setVerifyingKey(false);
+    }
+  }
 
 
   // ==========================================================
   // LOAD MODELS
   // ==========================================================
 
-  useEffect(() => {
+  async function loadModels(
+    key: string
+  ) {
 
-    let cancelled = false;
+    setModelsLoading(true);
 
-    async function loadModels() {
+    try {
 
-      try {
-
-        setLoadingModels(true);
-        setError("");
-
-        const response = await fetch(
-          `${API_BASE_URL}/api/models`,
+      const response =
+        await fetch(
+          `${API_URL}/api/models`,
           {
             method: "GET",
-            cache: "no-store",
+
+            headers: {
+              "X-API-Key": key,
+            },
           }
         );
 
-        if (!response.ok) {
-          throw new Error(
-            `Failed to load models (${response.status})`
-          );
+
+      if (!response.ok) {
+
+        let message =
+          "Failed to load OpenRouter models.";
+
+        try {
+
+          const error =
+            await response.json();
+
+          message =
+            typeof error.detail ===
+            "object"
+              ? error.detail?.error ||
+                message
+              : error.detail ||
+                message;
+
+        } catch {
+          // Keep default.
         }
 
-        const data = await response.json();
-
-        if (cancelled) {
-          return;
-        }
-
-        const compatibleModels: ModelInfo[] =
-          (data.models || []).filter(
-            (model: ModelInfo) =>
-              model.benchmark_compatible === true
-          );
-
-        setModels(compatibleModels);
-
-      } catch (err) {
-
-        if (cancelled) {
-          return;
-        }
-
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Failed to load Ollama models."
+        throw new Error(
+          message
         );
-
-      } finally {
-
-        if (!cancelled) {
-          setLoadingModels(false);
-        }
       }
-    }
-
-    loadModels();
-
-    return () => {
-      cancelled = true;
-    };
-
-  }, []);
 
 
-  // ==========================================================
-  // CREATE SESSION
-  // ==========================================================
-
-  useEffect(() => {
-
-    let cancelled = false;
-
-    async function createSession() {
-
-      try {
-
-        const response = await fetch(
-          `${API_BASE_URL}/api/session/create`,
-          {
-            method: "POST",
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(
-            `Failed to create session (${response.status})`
-          );
-        }
-
-        const data = await response.json();
-
-        if (!cancelled) {
-          setSessionId(data.session_id);
-        }
-
-      } catch (err) {
-
-        if (!cancelled) {
-
-          setError(
-            err instanceof Error
-              ? err.message
-              : "Failed to create session."
-          );
-
-        }
-      }
-    }
-
-    createSession();
-
-    return () => {
-      cancelled = true;
-    };
-
-  }, []);
+      const data =
+        await response.json();
 
 
-  // ==========================================================
-  // CLEANUP TEMPORARY MODELS
-  // ==========================================================
-
-  useEffect(() => {
-
-    if (!sessionId) {
-      return;
-    }
-
-    const cleanup = () => {
-
-      const payload = JSON.stringify({
-        session_id: sessionId,
-      });
-
-      // keepalive allows the request to continue while the
-      // browser is refreshing/closing the page.
-      fetch(
-        `${API_BASE_URL}/api/session/cleanup`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: payload,
-          keepalive: true,
-        }
-      ).catch(() => {
-        // Browser may terminate the request during shutdown.
-      });
-    };
-
-    window.addEventListener(
-      "pagehide",
-      cleanup
-    );
-
-    return () => {
-
-      window.removeEventListener(
-        "pagehide",
-        cleanup
+      setModels(
+        data.models || []
       );
 
-    };
+    } catch (error) {
 
-  }, [sessionId]);
+      console.error(
+        "Model loading error:",
+        error
+      );
+
+      setApiVerified(false);
+
+      setVerificationError(
+        error instanceof Error
+          ? error.message
+          : "Failed to load models."
+      );
+
+    } finally {
+
+      setModelsLoading(false);
+    }
+  }
+
+
+  // ==========================================================
+  // API KEY CHANGE
+  // ==========================================================
+
+  function handleApiKeyChange(
+    value: string
+  ) {
+
+    setApiKey(value);
+
+    // Changing the key invalidates
+    // the previous verification.
+
+    setApiVerified(false);
+
+    setModels([]);
+
+    setSelectedModel("");
+
+    setSelectedJudge("");
+
+    setBenchmarkResult(null);
+
+    setVerificationError("");
+  }
 
 
   // ==========================================================
@@ -299,18 +436,9 @@ export default function Home() {
 
     setSelectedModel(value);
 
-    // Changing either model invalidates the previous report.
     setBenchmarkResult(null);
-
-    setError("");
-    setStatus("");
-    setExpandedQuestion(null);
   }
 
-
-  // ==========================================================
-  // JUDGE CHANGE
-  // ==========================================================
 
   function handleJudgeChange(
     value: string
@@ -318,12 +446,7 @@ export default function Home() {
 
     setSelectedJudge(value);
 
-    // Changing either model invalidates the previous report.
     setBenchmarkResult(null);
-
-    setError("");
-    setStatus("");
-    setExpandedQuestion(null);
   }
 
 
@@ -333,163 +456,109 @@ export default function Home() {
 
   async function runBenchmark() {
 
-    // --------------------------------------------------------
-    // Validate selections
-    // --------------------------------------------------------
-
-    if (!selectedModel) {
-
-      setError(
-        "Please select a Prompt Model."
-      );
+    if (!apiVerified) {
 
       return;
     }
 
-    if (!selectedJudge) {
-
-      setError(
-        "Please select a Judge Model."
-      );
-
-      return;
-    }
-
-    if (!sessionId) {
-
-      setError(
-        "Session is not ready yet. Please try again."
-      );
+    if (
+      !selectedModel ||
+      !selectedJudge
+    ) {
 
       return;
     }
 
-    // --------------------------------------------------------
-    // Reset UI
-    // --------------------------------------------------------
+    setBenchmarking(true);
 
-    setLoading(true);
-    setError("");
     setBenchmarkResult(null);
-    setExpandedQuestion(null);
 
-    setStatus(
-      `Preparing ${selectedModel}...`
-    );
 
     try {
 
-      setStatus(
-        `Running benchmark with ${selectedModel} and judging with ${selectedJudge}...`
-      );
+      const response =
+        await fetch(
+          `${API_URL}/api/run-benchmark`,
+          {
+            method: "POST",
 
-      const response = await fetch(
-        `${API_BASE_URL}/api/run-benchmark`,
-        {
-          method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json",
 
-          headers: {
-            "Content-Type": "application/json",
-          },
+              "X-API-Key":
+                apiKey.trim(),
+            },
 
-          body: JSON.stringify({
-            model: selectedModel,
-            judge_model: selectedJudge,
-            session_id: sessionId,
-          }),
-        }
-      );
+            body: JSON.stringify({
+              model:
+                selectedModel,
 
-      const data = await response.json();
+              judge_model:
+                selectedJudge,
+            }),
+          }
+        );
+
 
       if (!response.ok) {
 
+        let message =
+          "Benchmark failed.";
+
+        try {
+
+          const error =
+            await response.json();
+
+          message =
+            typeof error.detail ===
+            "object"
+              ? error.detail?.error ||
+                message
+              : error.detail ||
+                message;
+
+        } catch {
+
+          message =
+            `Benchmark failed with status ${response.status}.`;
+        }
+
         throw new Error(
-          data.detail ||
-          `Benchmark failed (${response.status})`
+          message
         );
       }
 
-      setBenchmarkResult(data);
 
-      setStatus(
-        "Benchmark completed successfully."
+      const result:
+        BenchmarkResult =
+        await response.json();
+
+
+      setBenchmarkResult(
+        result
       );
 
-    } catch (err) {
+    } catch (error) {
 
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Benchmark failed."
+      console.error(
+        "Benchmark error:",
+        error
       );
 
-      setStatus("");
+      setBenchmarkResult({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Benchmark failed.",
+      });
 
     } finally {
 
-      setLoading(false);
+      setBenchmarking(false);
     }
   }
-
-
-  // ==========================================================
-  // FORMAT SCORE
-  // ==========================================================
-
-  function formatScore(
-    score: number | null | undefined
-  ) {
-
-    if (
-      score === null ||
-      score === undefined
-    ) {
-      return "N/A";
-    }
-
-    return score.toFixed(2);
-  }
-
-
-  // ==========================================================
-  // SCORE PERCENTAGE
-  // ==========================================================
-
-  function scorePercentage(
-    score: number | null | undefined
-  ) {
-
-    if (
-      score === null ||
-      score === undefined
-    ) {
-      return 0;
-    }
-
-    return Math.min(
-      100,
-      Math.max(
-        0,
-        (score / 5) * 100
-      )
-    );
-  }
-
-
-  // ==========================================================
-  // MODEL LISTS
-  // ==========================================================
-
-  const installedModels =
-    models.filter(
-      (model) => model.installed
-    );
-
-  const availableModels =
-    models.filter(
-      (model) => !model.installed
-    );
 
 
   // ==========================================================
@@ -497,51 +566,63 @@ export default function Home() {
   // ==========================================================
 
   const showReport =
+    apiVerified &&
     Boolean(selectedModel) &&
     Boolean(selectedJudge) &&
     Boolean(benchmarkResult) &&
-    !benchmarkResult?.summary?.model
-      ? false
-      : Boolean(
-          selectedModel &&
-          selectedJudge &&
-          benchmarkResult
-        );
+    !benchmarkResult?.error;
 
 
   // ==========================================================
-  // RENDER
+  // UI
   // ==========================================================
 
   return (
 
     <main className="min-h-screen bg-slate-950 text-white">
 
-      {/* =====================================================
-          HEADER
-      ====================================================== */}
+      {/* ================================================== */}
+      {/* HEADER                                             */}
+      {/* ================================================== */}
 
-      <header className="border-b border-slate-800">
+      <header className="border-b border-slate-800 bg-slate-950">
 
-        <div className="mx-auto max-w-7xl px-6 py-6">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
 
-          <div className="flex items-center justify-between">
+          <div>
 
-            <div>
+            <h1 className="text-2xl font-bold tracking-tight">
+              LLM-EvalBench
+            </h1>
 
-              <h1 className="text-2xl font-bold">
-                LLM-EvalBench
-              </h1>
+            <p className="mt-1 text-sm text-slate-400">
+              LLM Evaluation & Benchmarking Platform
+            </p>
 
-              <p className="mt-1 text-sm text-slate-400">
-                LLM Evaluation & Benchmarking Platform
-              </p>
+            <div className="mt-2">
+
+              <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-xs text-slate-400">
+                Provider: OpenRouter
+              </span>
 
             </div>
 
-            <div className="rounded-full border border-slate-700 bg-slate-900 px-4 py-2 text-xs text-slate-300">
-              Ollama
-            </div>
+          </div>
+
+
+          <div className="flex items-center gap-2 rounded-full border border-slate-700 px-4 py-2 text-sm">
+
+            <span
+              className={`h-2.5 w-2.5 rounded-full ${
+                apiOnline
+                  ? "bg-green-400"
+                  : "bg-red-400"
+              }`}
+            />
+
+            {apiOnline
+              ? "API Online"
+              : "API Offline"}
 
           </div>
 
@@ -550,22 +631,23 @@ export default function Home() {
       </header>
 
 
-      {/* =====================================================
-          MAIN CONTENT
-      ====================================================== */}
-
       <div className="mx-auto max-w-7xl px-6 py-8">
 
-        {/* ===================================================
-            ERROR
-        ==================================================== */}
 
-        {error && (
+        {/* ================================================= */}
+        {/* FASTAPI ERROR                                    */}
+        {/* ================================================= */}
 
-          <div className="mb-6 rounded-lg border border-red-800 bg-red-950/40 p-4">
+        {!apiOnline && (
 
-            <p className="text-sm font-medium text-red-300">
-              {error}
+          <div className="mb-8 rounded-xl border border-red-900 bg-red-950/30 p-6">
+
+            <p className="text-red-300">
+              Unable to connect to FastAPI.
+            </p>
+
+            <p className="mt-2 text-sm text-red-400">
+              Make sure Uvicorn is running on port 8000.
             </p>
 
           </div>
@@ -573,409 +655,277 @@ export default function Home() {
         )}
 
 
-        {/* ===================================================
-            STATUS
-        ==================================================== */}
+        {/* ================================================= */}
+        {/* MAIN PANEL                                       */}
+        {/* ================================================= */}
 
-        {status && !error && (
-
-          <div className="mb-6 rounded-lg border border-blue-800 bg-blue-950/40 p-4">
-
-            <p className="text-sm text-blue-300">
-              {status}
-            </p>
-
-          </div>
-
-        )}
+        <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
 
 
-        {/* ===================================================
-            MODEL SELECTION
-        ==================================================== */}
+          <div>
 
-        <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-
-          <div className="mb-6">
-
-            <h2 className="text-lg font-semibold">
-              Benchmark Configuration
+            <h2 className="text-xl font-semibold text-white">
+              Run Full Benchmark
             </h2>
 
             <p className="mt-1 text-sm text-slate-400">
-              Select the model being evaluated and the
-              Ollama model that will judge its responses.
+              Evaluate a selected OpenRouter model across all
+              20 benchmark questions.
             </p>
 
           </div>
 
 
-          <div className="grid gap-6 md:grid-cols-2">
+          {/* ================================================= */}
+          {/* API KEY                                          */}
+          {/* ================================================= */}
 
-            {/* =================================================
-                PROMPT MODEL
-            ================================================== */}
+          <div className="mt-6 rounded-xl border border-slate-800 bg-slate-950 p-5">
 
-            <div>
-
-              <label
-                htmlFor="prompt-model"
-                className="mb-2 block text-sm font-medium text-slate-300"
-              >
-                Prompt Model
-              </label>
-
-              <select
-                id="prompt-model"
-                value={selectedModel}
-                onChange={(event) =>
-                  handleModelChange(
-                    event.target.value
-                  )
-                }
-                disabled={
-                  loadingModels ||
-                  loading
-                }
-                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-
-                <option value="">
-                  {loadingModels
-                    ? "Loading Ollama models..."
-                    : "Select a prompt model"}
-                </option>
-
-
-                {/* Installed */}
-
-                {installedModels.length > 0 && (
-
-                  <optgroup label="Installed">
-
-                    {installedModels.map(
-                      (model) => (
-
-                        <option
-                          key={`prompt-${model.id}`}
-                          value={model.id}
-                        >
-                          {model.name} — Installed
-                        </option>
-
-                      )
-                    )}
-
-                  </optgroup>
-
-                )}
-
-
-                {/* Available */}
-
-                {availableModels.length > 0 && (
-
-                  <optgroup label="Available from Ollama">
-
-                    {availableModels.map(
-                      (model) => (
-
-                        <option
-                          key={`prompt-${model.id}`}
-                          value={model.id}
-                        >
-                          {model.name} — Download when selected
-                        </option>
-
-                      )
-                    )}
-
-                  </optgroup>
-
-                )}
-
-              </select>
-
-              <p className="mt-2 text-xs text-slate-500">
-                This model generates the answers that will
-                be evaluated.
-              </p>
-
-            </div>
-
-
-            {/* =================================================
-                JUDGE MODEL
-            ================================================== */}
-
-            <div>
-
-              <label
-                htmlFor="judge-model"
-                className="mb-2 block text-sm font-medium text-slate-300"
-              >
-                Judge Model
-              </label>
-
-              <select
-                id="judge-model"
-                value={selectedJudge}
-                onChange={(event) =>
-                  handleJudgeChange(
-                    event.target.value
-                  )
-                }
-                disabled={
-                  loadingModels ||
-                  loading
-                }
-                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition focus:border-purple-500 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-
-                <option value="">
-                  {loadingModels
-                    ? "Loading Ollama models..."
-                    : "Select a judge model"}
-                </option>
-
-
-                {/* Installed */}
-
-                {installedModels.length > 0 && (
-
-                  <optgroup label="Installed">
-
-                    {installedModels.map(
-                      (model) => (
-
-                        <option
-                          key={`judge-${model.id}`}
-                          value={model.id}
-                        >
-                          {model.name} — Installed
-                        </option>
-
-                      )
-                    )}
-
-                  </optgroup>
-
-                )}
-
-
-                {/* Available */}
-
-                {availableModels.length > 0 && (
-
-                  <optgroup label="Available from Ollama">
-
-                    {availableModels.map(
-                      (model) => (
-
-                        <option
-                          key={`judge-${model.id}`}
-                          value={model.id}
-                        >
-                          {model.name} — Download when selected
-                        </option>
-
-                      )
-                    )}
-
-                  </optgroup>
-
-                )}
-
-              </select>
-
-              <p className="mt-2 text-xs text-slate-500">
-                This model evaluates the generated responses
-                against the benchmark criteria.
-              </p>
-
-            </div>
-
-          </div>
-
-
-          {/* =================================================
-              RUN BUTTON
-          ================================================== */}
-
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-
-            <button
-              type="button"
-              onClick={runBenchmark}
-              disabled={
-                loading ||
-                loadingModels ||
-                !selectedModel ||
-                !selectedJudge ||
-                !sessionId
-              }
-              className="rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
+            <label
+              htmlFor="openrouter-key"
+              className="block text-sm font-medium text-slate-300"
             >
-
-              {loading
-                ? "Running Benchmark..."
-                : "Run Full Benchmark"}
-
-            </button>
+              OpenRouter API Key
+            </label>
 
 
-            {!selectedModel && (
-
-              <span className="text-xs text-slate-500">
-                Select a Prompt Model
-              </span>
-
-            )}
-
-            {selectedModel &&
-              !selectedJudge && (
-
-                <span className="text-xs text-slate-500">
-                  Select a Judge Model
-                </span>
-
-              )}
-
-          </div>
-
-        </section>
+            <p className="mt-1 text-xs text-slate-500">
+              Your API key is kept in this browser session and
+              is sent to the backend only when making OpenRouter
+              requests.
+            </p>
 
 
-        {/* ===================================================
-            REPORT
-        ==================================================== */}
+            {/* WARNING */}
 
-        {showReport &&
-          benchmarkResult && (
+            <div className="mt-4 rounded-lg border border-amber-900 bg-amber-950/30 p-4">
 
-            <section className="mt-8">
+              <p className="text-sm font-semibold text-amber-300">
+                ⚠ Model catalog includes free and premium models.
+              </p>
 
-              {/* ===============================================
-                  REPORT HEADER
-              ================================================ */}
+              <p className="mt-1 text-xs leading-5 text-amber-400">
+                Make sure your OpenRouter account has sufficient
+                credits before running a benchmark. Benchmarking
+                can make multiple model requests.
+              </p>
 
-              <div className="mb-6">
+            </div>
 
-                <h2 className="text-xl font-bold">
-                  Benchmark Report
-                </h2>
 
-                <p className="mt-1 text-sm text-slate-400">
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
 
-                  {benchmarkResult.summary.model}
+              <input
+                id="openrouter-key"
+                type="password"
+                value={apiKey}
+                onChange={(event) =>
+                  handleApiKeyChange(
+                    event.target.value
+                  )
+                }
+                placeholder="sk-or-v1-..."
+                className="flex-1 rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none placeholder:text-slate-600 focus:border-blue-500"
+              />
 
-                  {" "}
-                  evaluated by
 
-                  {" "}
+              <button
+                onClick={verifyApiKey}
+                disabled={
+                  verifyingKey ||
+                  !apiKey.trim() ||
+                  !apiOnline
+                }
+                className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+              >
 
-                  {benchmarkResult.summary.judge_model}
+                {verifyingKey
+                  ? "Verifying..."
+                  : apiVerified
+                    ? "✓ API Verified"
+                    : "Verify API Key"}
 
+              </button>
+
+            </div>
+
+
+            {/* VERIFICATION SUCCESS */}
+
+            {apiVerified && (
+
+              <div className="mt-4 rounded-lg border border-green-900 bg-green-950/30 p-4">
+
+                <p className="text-sm font-semibold text-green-300">
+                  ✓ OpenRouter API key verified
+                </p>
+
+                <p className="mt-1 text-xs text-green-400">
+                  The OpenRouter model catalog is now available.
                 </p>
 
               </div>
 
+            )}
 
-              {/* ===============================================
-                  SUMMARY CARDS
-              ================================================ */}
 
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {/* VERIFICATION ERROR */}
 
-                {/* Overall */}
+            {verificationError && (
 
-                <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
+              <div className="mt-4 rounded-lg border border-red-900 bg-red-950/30 p-4">
 
-                  <p className="text-xs uppercase tracking-wide text-slate-500">
-                    Overall Score
+                <p className="text-sm font-semibold text-red-300">
+                  API Key Verification Failed
+                </p>
+
+                <p className="mt-1 text-xs text-red-400">
+                  {verificationError}
+                </p>
+
+              </div>
+
+            )}
+
+          </div>
+
+
+          {/* ================================================= */}
+          {/* MODEL SELECTORS                                  */}
+          {/* IMPORTANT: ONLY RENDER AFTER VERIFICATION       */}
+          {/* ================================================= */}
+
+          {apiVerified && (
+
+            <>
+
+              <div className="mt-6 grid gap-5 md:grid-cols-2">
+
+
+                {/* PROMPT MODEL */}
+
+                <div>
+
+                  <label className="mb-2 block text-sm text-slate-300">
+                    Prompt Model
+                  </label>
+
+                  <select
+                    value={selectedModel}
+                    onChange={(event) =>
+                      handleModelChange(
+                        event.target.value
+                      )
+                    }
+                    disabled={
+                      modelsLoading
+                    }
+                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+
+                    <option value="">
+                      {modelsLoading
+                        ? "Loading models..."
+                        : "Select model"}
+                    </option>
+
+
+                    {models
+                      .filter(
+                        (
+                          model
+                        ) =>
+                          model.benchmark_compatible
+                      )
+                      .map(
+                        (
+                          model
+                        ) => (
+
+                          <option
+                            key={
+                              model.id
+                            }
+                            value={
+                              model.id
+                            }
+                          >
+                            {model.name}
+                          </option>
+
+                        )
+                      )}
+
+                  </select>
+
+                  <p className="mt-2 text-xs text-slate-500">
+                    {models.length} models available in the
+                    OpenRouter catalog.
                   </p>
-
-                  <p className="mt-2 text-3xl font-bold text-white">
-                    {formatScore(
-                      benchmarkResult.summary.overall_score
-                    )}
-                    <span className="ml-1 text-sm font-normal text-slate-500">
-                      / 5
-                    </span>
-                  </p>
-
-                  {benchmarkResult.summary.overall_score !== null && (
-
-                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-800">
-
-                      <div
-                        className="h-full rounded-full bg-blue-500"
-                        style={{
-                          width: `${scorePercentage(
-                            benchmarkResult.summary.overall_score
-                          )}%`,
-                        }}
-                      />
-
-                    </div>
-
-                  )}
 
                 </div>
 
 
-                {/* Questions */}
+                {/* JUDGE MODEL */}
 
-                <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
+                <div>
 
-                  <p className="text-xs uppercase tracking-wide text-slate-500">
-                    Questions
-                  </p>
+                  <label className="mb-2 block text-sm text-slate-300">
+                    Judge Model
+                  </label>
 
-                  <p className="mt-2 text-3xl font-bold">
-                    {benchmarkResult.summary.total_questions}
-                  </p>
+                  <select
+                    value={selectedJudge}
+                    onChange={(event) =>
+                      handleJudgeChange(
+                        event.target.value
+                      )
+                    }
+                    disabled={
+                      modelsLoading
+                    }
+                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
 
-                  <p className="mt-1 text-xs text-slate-500">
-                    Total benchmark questions
-                  </p>
-
-                </div>
-
-
-                {/* Successful */}
-
-                <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
-
-                  <p className="text-xs uppercase tracking-wide text-slate-500">
-                    Successful
-                  </p>
-
-                  <p className="mt-2 text-3xl font-bold text-green-400">
-                    {benchmarkResult.summary.successful_questions}
-                  </p>
-
-                  <p className="mt-1 text-xs text-slate-500">
-                    Questions evaluated successfully
-                  </p>
-
-                </div>
+                    <option value="">
+                      {modelsLoading
+                        ? "Loading models..."
+                        : "Select judge model"}
+                    </option>
 
 
-                {/* Failed */}
+                    {models
+                      .filter(
+                        (
+                          model
+                        ) =>
+                          model.benchmark_compatible
+                      )
+                      .map(
+                        (
+                          model
+                        ) => (
 
-                <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
+                          <option
+                            key={
+                              model.id
+                            }
+                            value={
+                              model.id
+                            }
+                          >
+                            {model.name}
+                          </option>
 
-                  <p className="text-xs uppercase tracking-wide text-slate-500">
-                    Failed
-                  </p>
+                        )
+                      )}
 
-                  <p className="mt-2 text-3xl font-bold text-red-400">
-                    {benchmarkResult.summary.failed_questions}
-                  </p>
+                  </select>
 
-                  <p className="mt-1 text-xs text-slate-500">
-                    Questions with errors
+                  <p className="mt-2 text-xs text-slate-500">
+                    The judge evaluates the candidate responses
+                    against the benchmark criteria.
                   </p>
 
                 </div>
@@ -983,354 +933,548 @@ export default function Home() {
               </div>
 
 
-              {/* ===============================================
-                  QUESTION RESULTS
-              ================================================ */}
+              {/* SELECTED MODELS */}
 
-              <div className="mt-8">
+              {(selectedModel ||
+                selectedJudge) && (
 
-                <div className="mb-4">
+                <div className="mt-5 grid gap-3 rounded-lg border border-slate-800 bg-slate-950 p-4 md:grid-cols-2">
 
-                  <h3 className="text-lg font-semibold">
-                    Question Results
+                  <div>
+
+                    <p className="text-xs text-slate-500">
+                      Prompt Model
+                    </p>
+
+                    <p className="mt-1 text-sm text-slate-200">
+                      {selectedModel
+                        ? displayModelName(
+                            selectedModel
+                          )
+                        : "Not selected"}
+                    </p>
+
+                  </div>
+
+
+                  <div>
+
+                    <p className="text-xs text-slate-500">
+                      Judge Model
+                    </p>
+
+                    <p className="mt-1 text-sm text-slate-200">
+                      {selectedJudge
+                        ? displayModelName(
+                            selectedJudge
+                          )
+                        : "Not selected"}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              )}
+
+
+              {/* RUN BUTTON */}
+
+              <button
+                onClick={
+                  runBenchmark
+                }
+                disabled={
+                  benchmarking ||
+                  !apiVerified ||
+                  !selectedModel ||
+                  !selectedJudge ||
+                  !apiOnline
+                }
+                className="mt-6 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+
+                {benchmarking
+                  ? "Running 20-Question Benchmark..."
+                  : "Run Full Benchmark"}
+
+              </button>
+
+
+              {/* SELECTION MESSAGE */}
+
+              {!selectedModel ||
+              !selectedJudge ? (
+
+                <div className="mt-6 rounded-lg border border-slate-800 bg-slate-950 p-5">
+
+                  <h3 className="font-semibold text-white">
+                    Select Models to Begin
                   </h3>
 
-                  <p className="mt-1 text-sm text-slate-500">
-                    Click a question to inspect the response,
-                    reference answer, and judge rationale.
+                  <p className="mt-2 text-sm text-slate-400">
+                    Select both a Prompt Model and a Judge Model
+                    to run the benchmark.
                   </p>
 
                 </div>
 
+              ) : null}
 
-                <div className="space-y-3">
 
-                  {benchmarkResult.results.map(
-                    (result, index) => {
+              {/* RUNNING */}
 
-                      const isExpanded =
-                        expandedQuestion ===
-                        result.question_id;
+              {benchmarking && (
 
-                      return (
+                <div className="mt-6 rounded-lg border border-blue-900 bg-blue-950/30 p-5">
 
-                        <div
-                          key={result.question_id}
-                          className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900"
-                        >
+                  <p className="font-medium text-blue-300">
+                    Benchmark is running...
+                  </p>
 
-                          {/* =================================
-                              QUESTION HEADER
-                          ================================== */}
+                  <p className="mt-2 text-sm text-blue-400">
+                    The selected model is being evaluated across
+                    all 20 benchmark questions. OpenRouter usage
+                    may incur charges depending on the models selected.
+                  </p>
 
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setExpandedQuestion(
-                                isExpanded
-                                  ? null
-                                  : result.question_id
-                              )
-                            }
-                            className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition hover:bg-slate-800/60"
-                          >
+                </div>
 
-                            <div className="flex min-w-0 items-center gap-4">
+              )}
 
-                              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-800 text-xs font-semibold text-slate-300">
-                                {index + 1}
-                              </span>
 
-                              <div className="min-w-0">
+              {/* ERROR */}
 
-                                <div className="flex flex-wrap items-center gap-2">
+              {benchmarkResult?.error && (
 
-                                  <span className="text-sm font-semibold text-white">
-                                    {result.question_id}
-                                  </span>
+                <div className="mt-6 rounded-lg border border-red-900 bg-red-950/30 p-5">
 
-                                  <span className="rounded-full bg-slate-800 px-2 py-1 text-[10px] uppercase tracking-wide text-slate-400">
-                                    {result.category}
-                                  </span>
+                  <p className="font-semibold text-red-300">
+                    Benchmark Error
+                  </p>
 
-                                  <span className="rounded-full bg-slate-800 px-2 py-1 text-[10px] uppercase tracking-wide text-slate-400">
-                                    {result.difficulty}
-                                  </span>
+                  <p className="mt-2 text-sm text-red-400">
+                    {benchmarkResult.error}
+                  </p>
+
+                </div>
+
+              )}
+
+
+              {/* ================================================= */}
+              {/* REPORT                                            */}
+              {/* ================================================= */}
+
+              {showReport && benchmarkResult && (
+                <div className="mt-8 border-t border-slate-800 pt-8">
+
+                  {/* REPORT HEADER */}
+                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+
+                    <div>
+                      <h3 className="text-xl font-semibold text-white">
+                        Benchmark Report
+                      </h3>
+
+                      <p className="mt-1 text-sm text-slate-400">
+                        {displayModelName(benchmarkResult.model)}
+                        {" → "}
+                        {displayModelName(benchmarkResult.judge_model)}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <span className="rounded-full border border-slate-700 px-3 py-1 text-sm text-slate-300">
+                        OpenRouter
+                      </span>
+
+                      <span
+                        className={`rounded-full border px-3 py-1 text-sm ${
+                          benchmarkResult.status === "completed"
+                            ? "border-green-800 bg-green-950/30 text-green-300"
+                            : "border-amber-800 bg-amber-950/30 text-amber-300"
+                        }`}
+                      >
+                        {benchmarkResult.status === "completed"
+                          ? "Completed"
+                          : "Partial"}
+                      </span>
+                    </div>
+
+                  </div>
+
+
+                  {/* PARTIAL RUN WARNING */}
+                  {benchmarkResult.status === "partial" && (
+                    <div className="mt-6 rounded-xl border border-amber-900 bg-amber-950/30 p-5">
+
+                      <div className="flex items-start gap-3">
+
+                        <div className="text-xl">
+                          ⚠
+                        </div>
+
+                        <div>
+                          <h4 className="font-semibold text-amber-300">
+                            Benchmark partially completed
+                          </h4>
+
+                          <p className="mt-2 text-sm leading-6 text-amber-400">
+                            {benchmarkResult.successful || 0} of{" "}
+                            {benchmarkResult.total_questions || 0} questions
+                            were evaluated successfully.
+                            {" "}
+                            {benchmarkResult.failed || 0} questions failed.
+                          </p>
+
+                          <p className="mt-2 text-sm leading-6 text-amber-400">
+                            The overall benchmark score is unavailable until
+                            all questions have been evaluated successfully.
+                          </p>
+
+                          {benchmarkResult.error_summary &&
+                            Object.keys(benchmarkResult.error_summary).length > 0 && (
+                              <div className="mt-4 rounded-lg border border-amber-900 bg-slate-950 p-4">
+
+                                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                  Failure Summary
+                                </p>
+
+                                <div className="mt-3 space-y-2">
+
+                                  {Object.entries(
+                                    benchmarkResult.error_summary
+                                  ).map(([errorType, count]) => (
+                                    <div
+                                      key={errorType}
+                                      className="flex items-center justify-between text-sm"
+                                    >
+                                      <span className="text-slate-300">
+                                        {formatName(errorType)}
+                                      </span>
+
+                                      <span className="font-semibold text-amber-300">
+                                        {count}
+                                      </span>
+                                    </div>
+                                  ))}
 
                                 </div>
 
-                                <p className="mt-1 truncate text-sm text-slate-400">
-                                  {result.question}
-                                </p>
+                              </div>
+                            )}
 
+                        </div>
+
+                      </div>
+
+                    </div>
+                  )}
+
+
+                  {/* METRICS */}
+                  <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+                    <MetricCard
+                      title="Overall Score"
+                      value={
+                        benchmarkResult.status === "completed" &&
+                        benchmarkResult.overall_score != null
+                          ? `${(
+                              benchmarkResult.overall_score * 100
+                            ).toFixed(1)}%`
+                          : "Unavailable"
+                      }
+                    />
+
+                    <MetricCard
+                      title="Questions"
+                      value={`${benchmarkResult.successful || 0}/${
+                        benchmarkResult.total_questions || 0
+                      }`}
+                    />
+
+                    <MetricCard
+                      title="Failed"
+                      value={String(benchmarkResult.failed || 0)}
+                    />
+
+                    <MetricCard
+                      title="Judge Model"
+                      value={displayModelName(
+                        benchmarkResult.judge_model
+                      )}
+                    />
+
+                  </div>
+
+
+                  {/* ONLY SHOW ANALYTICS FOR A COMPLETE RUN */}
+                  {benchmarkResult.status === "completed" && (
+                    <>
+
+                      {/* CATEGORY */}
+                      <div className="mt-8">
+
+                        <h4 className="text-lg font-semibold text-white">
+                          Performance by Category
+                        </h4>
+
+                        <p className="mt-1 text-sm text-slate-400">
+                          Average evaluation score across benchmark categories.
+                        </p>
+
+                        <div className="mt-6 space-y-5">
+
+                          {Object.entries(
+                            benchmarkResult.by_category || {}
+                          ).map(([category, score]) => (
+                            <ScoreBar
+                              key={category}
+                              label={formatName(category)}
+                              score={Number(score)}
+                            />
+                          ))}
+
+                        </div>
+
+                      </div>
+
+
+                      {/* DIFFICULTY */}
+                      <div className="mt-8">
+
+                        <h4 className="text-lg font-semibold text-white">
+                          Performance by Difficulty
+                        </h4>
+
+                        <div className="mt-5 grid gap-4 md:grid-cols-3">
+
+                          {Object.entries(
+                            benchmarkResult.by_difficulty || {}
+                          ).map(([difficulty, score]) => (
+                            <div
+                              key={difficulty}
+                              className="rounded-lg border border-slate-800 bg-slate-950 p-5"
+                            >
+
+                              <div className="text-sm capitalize text-slate-400">
+                                {difficulty}
+                              </div>
+
+                              <div className="mt-2 text-2xl font-semibold text-white">
+                                {(Number(score) * 100).toFixed(1)}%
                               </div>
 
                             </div>
+                          ))}
+
+                        </div>
+
+                      </div>
 
 
-                            <div className="flex shrink-0 items-center gap-3">
+                      {/* CRITERIA */}
+                      <div className="mt-8">
 
-                              {result.error ? (
+                        <h4 className="text-lg font-semibold text-white">
+                          Performance by Criterion
+                        </h4>
 
-                                <span className="rounded-full bg-red-950 px-3 py-1 text-xs font-medium text-red-400">
-                                  Error
-                                </span>
+                        <div className="mt-5 grid gap-x-8 md:grid-cols-2">
 
-                              ) : (
+                          {Object.entries(
+                            benchmarkResult.by_criterion || {}
+                          ).map(([criterion, score]) => (
+                            <div
+                              key={criterion}
+                              className="flex items-center justify-between border-b border-slate-800 py-3"
+                            >
 
-                                <span className="rounded-full bg-green-950 px-3 py-1 text-xs font-medium text-green-400">
+                              <span className="text-slate-300">
+                                {formatName(criterion)}
+                              </span>
 
-                                  {formatScore(
-                                    result.evaluation?.overall_score
-                                  )}
-                                  /5
-
-                                </span>
-
-                              )}
-
-                              <span className="text-slate-500">
-
-                                {isExpanded
-                                  ? "−"
-                                  : "+"}
-
+                              <span className="font-semibold text-white">
+                                {(Number(score) * 100).toFixed(1)}%
                               </span>
 
                             </div>
+                          ))}
 
-                          </button>
+                        </div>
 
-
-                          {/* =================================
-                              EXPANDED CONTENT
-                          ================================== */}
-
-                          {isExpanded && (
-
-                            <div className="border-t border-slate-800 px-5 py-6">
-
-                              {/* Error */}
-
-                              {result.error && (
-
-                                <div className="mb-6 rounded-lg border border-red-800 bg-red-950/30 p-4">
-
-                                  <p className="text-xs uppercase tracking-wide text-red-500">
-                                    Error
-                                  </p>
-
-                                  <p className="mt-2 text-sm text-red-300">
-                                    {result.error}
-                                  </p>
-
-                                </div>
-
-                              )}
+                      </div>
 
 
-                              {/* Question */}
+                      {/* LOWEST SCORING */}
+                      <div className="mt-8">
 
-                              <div className="mb-6">
+                        <h4 className="text-lg font-semibold text-white">
+                          Lowest-Scoring Questions
+                        </h4>
 
-                                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                  Question
-                                </p>
+                        <div className="mt-5 overflow-hidden rounded-lg border border-slate-800">
 
-                                <p className="text-sm leading-6 text-slate-200">
-                                  {result.question}
-                                </p>
+                          {benchmarkResult.lowest_scoring &&
+                          benchmarkResult.lowest_scoring.length > 0 ? (
 
-                              </div>
-
-
-                              {/* Reference Answer */}
-
-                              <div className="mb-6">
-
-                                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                  Reference Answer
-                                </p>
-
-                                <div className="rounded-lg bg-slate-950 p-4">
-
-                                  <p className="whitespace-pre-wrap text-sm leading-6 text-slate-300">
-                                    {result.reference_answer}
-                                  </p>
-
-                                </div>
-
-                              </div>
-
-
-                              {/* Model Response */}
-
-                              <div className="mb-6">
-
-                                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                  Model Response
-                                </p>
-
-                                <div className="rounded-lg border border-slate-800 bg-slate-950 p-4">
-
-                                  <p className="whitespace-pre-wrap text-sm leading-6 text-slate-300">
-                                    {result.model_response ||
-                                      "No response generated."}
-                                  </p>
-
-                                </div>
-
-                              </div>
-
-
-                              {/* Evaluation */}
-
-                              {result.evaluation && (
+                            benchmarkResult.lowest_scoring.map((item) => (
+                              <div
+                                key={item.id}
+                                className="flex items-center justify-between border-b border-slate-800 px-4 py-4 last:border-b-0"
+                              >
 
                                 <div>
 
-                                  <div className="mb-4 flex items-center justify-between">
-
-                                    <div>
-
-                                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                        Judge Evaluation
-                                      </p>
-
-                                      <p className="mt-1 text-xs text-slate-600">
-                                        Judge:{" "}
-                                        {result.evaluation.judge_model ||
-                                          benchmarkResult.summary.judge_model}
-                                      </p>
-
-                                    </div>
-
-                                    <div className="text-right">
-
-                                      <p className="text-2xl font-bold text-white">
-                                        {formatScore(
-                                          result.evaluation.overall_score
-                                        )}
-                                        <span className="ml-1 text-xs font-normal text-slate-500">
-                                          / 5
-                                        </span>
-                                      </p>
-
-                                    </div>
-
+                                  <div className="font-medium text-white">
+                                    {item.id}
                                   </div>
 
-
-                                  {/* Criterion Scores */}
-
-                                  <div className="grid gap-3 md:grid-cols-2">
-
-                                    {Object.entries(
-                                      result.evaluation.criteria_scores
-                                    ).map(
-                                      ([
-                                        criterion,
-                                        criterionResult,
-                                      ]) => (
-
-                                        <div
-                                          key={criterion}
-                                          className="rounded-lg border border-slate-800 bg-slate-950 p-4"
-                                        >
-
-                                          <div className="flex items-center justify-between">
-
-                                            <span className="text-sm font-medium text-slate-300">
-                                              {criterion
-                                                .replace(
-                                                  /_/g,
-                                                  " "
-                                                )}
-                                            </span>
-
-                                            <span className="text-sm font-bold text-white">
-                                              {criterionResult.score}
-                                              /5
-                                            </span>
-
-                                          </div>
-
-
-                                          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-800">
-
-                                            <div
-                                              className="h-full rounded-full bg-purple-500"
-                                              style={{
-                                                width: `${
-                                                  (criterionResult.score /
-                                                    5) *
-                                                  100
-                                                }%`,
-                                              }}
-                                            />
-
-                                          </div>
-
-
-                                          <p className="mt-3 text-xs leading-5 text-slate-500">
-                                            {
-                                              criterionResult.rationale
-                                            }
-                                          </p>
-
-                                        </div>
-
-                                      )
-                                    )}
-
+                                  <div className="mt-1 text-sm text-slate-400">
+                                    {formatName(item.category)}
+                                    {" · "}
+                                    {formatName(item.difficulty)}
                                   </div>
-
-
-                                  {/* Overall Rationale */}
-
-                                  {result.evaluation.overall_rationale && (
-
-                                    <div className="mt-4 rounded-lg border border-slate-800 bg-slate-950 p-4">
-
-                                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                        Overall Rationale
-                                      </p>
-
-                                      <p className="mt-2 text-sm leading-6 text-slate-400">
-                                        {
-                                          result.evaluation
-                                            .overall_rationale
-                                        }
-                                      </p>
-
-                                    </div>
-
-                                  )}
 
                                 </div>
 
-                              )}
+                                <div className="font-semibold text-white">
+                                  {(item.score * 100).toFixed(1)}%
+                                </div>
 
+                              </div>
+                            ))
+
+                          ) : (
+
+                            <div className="p-5 text-sm text-slate-400">
+                              No low-scoring questions available.
                             </div>
 
                           )}
 
                         </div>
 
-                      );
-                    }
+                      </div>
+
+                    </>
                   )}
 
                 </div>
+              )}
 
-              </div>
-
-            </section>
+            </>
 
           )}
+
+
+          {/* ================================================= */}
+          {/* BEFORE VERIFICATION                              */}
+          {/* ================================================= */}
+
+          {!apiVerified && (
+
+            <div className="mt-6 rounded-lg border border-slate-800 bg-slate-950 p-5">
+
+              <h3 className="font-semibold text-white">
+                Verify OpenRouter API Key to Continue
+              </h3>
+
+              <p className="mt-2 text-sm text-slate-400">
+                Model selection will appear only after your
+                OpenRouter API key has been successfully verified.
+              </p>
+
+            </div>
+
+          )}
+
+        </section>
 
       </div>
 
     </main>
+  );
+}
+
+
+/* ============================================================= */
+/* COMPONENTS                                                     */
+/* ============================================================= */
+
+function MetricCard({
+  title,
+  value,
+}: {
+  title: string;
+  value: string;
+}) {
+
+  return (
+
+    <div className="rounded-2xl border border-slate-800 bg-slate-950 p-5">
+
+      <p className="text-sm text-slate-400">
+        {title}
+      </p>
+
+      <p className="mt-3 text-2xl font-bold tracking-tight text-white">
+        {value}
+      </p>
+
+    </div>
+  );
+}
+
+
+function ScoreBar({
+  label,
+  score,
+}: {
+  label: string;
+  score: number;
+}) {
+
+  const percentage =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        score * 100
+      )
+    );
+
+  return (
+
+    <div>
+
+      <div className="mb-2 flex justify-between text-sm">
+
+        <span className="text-slate-300">
+          {label}
+        </span>
+
+        <span className="font-semibold text-white">
+          {percentage.toFixed(1)}%
+        </span>
+
+      </div>
+
+
+      <div className="h-3 overflow-hidden rounded-full bg-slate-800">
+
+        <div
+          className="h-full rounded-full bg-blue-500 transition-all"
+          style={{
+            width:
+              `${percentage}%`,
+          }}
+        />
+
+      </div>
+
+    </div>
   );
 }

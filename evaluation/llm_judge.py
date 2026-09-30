@@ -4,7 +4,10 @@ import json
 import re
 from typing import Any, Dict, List
 
-import ollama
+from evaluation.deterministic_checks import (
+    check_instruction_constraints,
+)
+from models.model_runner import run_model
 
 
 # ============================================================
@@ -33,111 +36,14 @@ ALLOWED_CRITERIA = {
 
 
 # ============================================================
-# OLLAMA MODEL HELPERS
-# ============================================================
-
-def get_local_models() -> List[str]:
-    """Return models currently installed in Ollama."""
-
-    try:
-        result = ollama.list()
-    except Exception as exc:
-        raise RuntimeError(
-            f"Could not connect to Ollama: {exc}"
-        ) from exc
-
-    models = []
-
-    for model in result.get("models", []):
-        name = model.get("model") or model.get("name")
-
-        if name:
-            models.append(name)
-
-    return models
-
-
-def is_model_installed(model_name: str) -> bool:
-    """Check whether an Ollama model is installed."""
-
-    target = model_name.lower()
-    target_base = target.split(":", 1)[0]
-
-    for installed in get_local_models():
-
-        installed_lower = installed.lower()
-        installed_base = installed_lower.split(":", 1)[0]
-
-        if installed_lower == target:
-            return True
-
-        if installed_base == target_base:
-            return True
-
-    return False
-
-
-def ensure_judge_model(model_name: str):
-    """
-    Pull the judge model if it is not already installed.
-
-    Session cleanup is handled by main.py.
-    """
-
-    if not model_name:
-        raise ValueError(
-            "judge_model cannot be empty."
-        )
-
-    if is_model_installed(model_name):
-
-        print(
-            f"[LLM Judge] {model_name} already installed."
-        )
-
-        return
-
-    print(
-        f"[LLM Judge] {model_name} is not installed."
-    )
-
-    print(
-        f"[LLM Judge] Pulling {model_name}..."
-    )
-
-    try:
-
-        ollama.pull(model_name)
-
-    except Exception as exc:
-
-        raise RuntimeError(
-            f"Failed to pull judge model "
-            f"'{model_name}': {exc}"
-        ) from exc
-
-    print(
-        f"[LLM Judge] Successfully pulled "
-        f"{model_name}."
-    )
-
-
-# ============================================================
 # JUDGE PROMPT
 # ============================================================
 
 def build_judge_prompt(
     question: Dict[str, Any],
     model_response: str,
+    deterministic_checks: Dict[str, Any] | None = None,
 ) -> str:
-    """
-    Build the evaluation prompt using the actual benchmark schema.
-
-    Benchmark fields:
-        prompt
-        reference_answer
-        evaluation_criteria
-    """
 
     prompt = question.get(
         "prompt",
@@ -169,17 +75,35 @@ def build_judge_prompt(
         for criterion in criteria
     )
 
+    deterministic_evidence = (
+        "No deterministic checks were required."
+    )
+
+    if deterministic_checks:
+
+        deterministic_evidence = json.dumps(
+            deterministic_checks,
+            indent=2,
+            ensure_ascii=False,
+        )
+
     return f"""
 You are an expert LLM evaluator.
 
 Evaluate the candidate model response against the benchmark
-prompt, reference answer, and requested evaluation criteria.
+prompt, reference answer, requested evaluation criteria,
+and deterministic validation evidence.
 
 Be strict and evidence-based.
 
 Do not reward an answer simply because it sounds confident.
 
 Do not invent facts.
+
+IMPORTANT:
+When deterministic validation reports that an explicit
+instruction was violated, treat that result as authoritative
+evidence for the instruction_following criterion.
 
 For every requested criterion, provide:
 1. A score from 0 to 5.
@@ -210,6 +134,7 @@ Whether the reasoning is logically sound.
 
 instruction_following:
 Whether explicit instructions were followed.
+Use deterministic validation evidence when available.
 
 faithfulness:
 Whether the answer accurately represents the supplied information.
@@ -241,6 +166,9 @@ CANDIDATE MODEL RESPONSE:
 REQUESTED EVALUATION CRITERIA:
 {criteria_text}
 
+DETERMINISTIC VALIDATION:
+{deterministic_evidence}
+
 Return ONLY valid JSON.
 
 Required structure:
@@ -270,21 +198,18 @@ Rules:
 # JSON EXTRACTION
 # ============================================================
 
-def extract_json(text: str) -> Dict[str, Any]:
-    """
-    Parse JSON from the judge response.
-
-    Handles occasional Markdown code fences.
-    """
+def extract_json(
+    text: str,
+) -> Dict[str, Any]:
 
     if not text:
+
         raise ValueError(
             "Judge returned an empty response."
         )
 
     cleaned = text.strip()
 
-    # Remove ```json ... ``` if present
     cleaned = re.sub(
         r"^```json\s*",
         "",
@@ -306,31 +231,39 @@ def extract_json(text: str) -> Dict[str, Any]:
 
     cleaned = cleaned.strip()
 
-    # Try direct JSON first
     try:
 
-        parsed = json.loads(cleaned)
+        parsed = json.loads(
+            cleaned
+        )
 
-        if isinstance(parsed, dict):
+        if isinstance(
+            parsed,
+            dict,
+        ):
             return parsed
 
     except json.JSONDecodeError:
         pass
 
-    # Try extracting the outermost JSON object
     start = cleaned.find("{")
     end = cleaned.rfind("}")
 
     if start == -1 or end == -1:
+
         raise ValueError(
             "Judge did not return valid JSON."
         )
 
-    candidate = cleaned[start:end + 1]
+    candidate = cleaned[
+        start:end + 1
+    ]
 
     try:
 
-        parsed = json.loads(candidate)
+        parsed = json.loads(
+            candidate
+        )
 
     except json.JSONDecodeError as exc:
 
@@ -338,7 +271,11 @@ def extract_json(text: str) -> Dict[str, Any]:
             f"Could not parse judge JSON: {exc}"
         ) from exc
 
-    if not isinstance(parsed, dict):
+    if not isinstance(
+        parsed,
+        dict,
+    ):
+
         raise ValueError(
             "Judge JSON must be an object."
         )
@@ -350,12 +287,15 @@ def extract_json(text: str) -> Dict[str, Any]:
 # SCORE NORMALIZATION
 # ============================================================
 
-def normalize_score(value: Any) -> int:
-    """Convert judge score to integer 0-5."""
+def normalize_score(
+    value: Any,
+) -> int:
 
     try:
 
-        score = float(value)
+        score = float(
+            value
+        )
 
     except (
         TypeError,
@@ -374,7 +314,9 @@ def normalize_score(value: Any) -> int:
         ),
     )
 
-    return int(round(score))
+    return int(
+        round(score)
+    )
 
 
 # ============================================================
@@ -385,12 +327,6 @@ def validate_evaluation(
     evaluation: Dict[str, Any],
     requested_criteria: List[str],
 ) -> Dict[str, Any]:
-    """
-    Validate judge output and calculate overall score.
-
-    The final overall score is calculated by Python rather than
-    blindly trusting a number produced by the judge.
-    """
 
     if "criteria_scores" not in evaluation:
 
@@ -430,9 +366,11 @@ def validate_evaluation(
                 f"criterion: {criterion}"
             )
 
-        criterion_result = criteria_scores[
-            criterion
-        ]
+        criterion_result = (
+            criteria_scores[
+                criterion
+            ]
+        )
 
         if not isinstance(
             criterion_result,
@@ -463,17 +401,20 @@ def validate_evaluation(
         if rationale is None:
             rationale = ""
 
-        normalized_scores[criterion] = {
+        normalized_scores[
+            criterion
+        ] = {
             "score": score,
             "rationale": str(
                 rationale
             ).strip(),
         }
 
-    # Calculate overall score ourselves
     scores = [
         item["score"]
-        for item in normalized_scores.values()
+        for item in (
+            normalized_scores.values()
+        )
     ]
 
     overall_score = (
@@ -510,26 +451,33 @@ def judge_response(
     question: Dict[str, Any],
     model_response: str,
     judge_model: str,
+    api_key: str,
     temperature: float = DEFAULT_TEMPERATURE,
     max_tokens: int = DEFAULT_MAX_TOKENS,
 ) -> Dict[str, Any]:
-    """
-    Evaluate a candidate model response using an Ollama judge.
-    """
 
     if not question:
+
         raise ValueError(
             "question cannot be empty."
         )
 
     if not model_response:
+
         raise ValueError(
             "model_response cannot be empty."
         )
 
     if not judge_model:
+
         raise ValueError(
             "judge_model cannot be empty."
+        )
+
+    if not api_key:
+
+        raise ValueError(
+            "api_key cannot be empty."
         )
 
     criteria = question.get(
@@ -544,7 +492,6 @@ def judge_response(
             "evaluation_criteria."
         )
 
-    # Validate requested criteria
     invalid_criteria = (
         set(criteria)
         - ALLOWED_CRITERIA
@@ -557,145 +504,172 @@ def judge_response(
             f"{sorted(invalid_criteria)}"
         )
 
-    # Make sure judge exists
-    ensure_judge_model(
-        judge_model
+    # --------------------------------------------------------
+    # Deterministic validation
+    # --------------------------------------------------------
+
+    deterministic_checks = (
+        check_instruction_constraints(
+            question=question,
+            response=model_response,
+        )
     )
 
+    # --------------------------------------------------------
     # Build judge prompt
+    # --------------------------------------------------------
+
     prompt = build_judge_prompt(
         question=question,
         model_response=model_response,
+        deterministic_checks=(
+            deterministic_checks
+        ),
     )
 
     print(
         f"[LLM Judge] "
-        f"Evaluating with {judge_model}"
+        f"OpenRouter model={judge_model}"
     )
 
-    # Call Ollama
+    # --------------------------------------------------------
+    # Call OpenRouter
+    # --------------------------------------------------------
+
     try:
 
-        response = ollama.chat(
+        raw_content = run_model(
             model=judge_model,
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are a strict LLM "
-                        "evaluation judge. "
-                        "Return only valid JSON."
-                    ),
-                },
-                {
-                    "role": "user",
-                    "content": prompt,
-                },
-            ],
-            options={
-                "temperature": temperature,
-                "num_predict": max_tokens,
+            prompt=prompt,
+            api_key=api_key,
+            system_prompt=(
+                "You are a strict LLM "
+                "evaluation judge. "
+                "Return ONLY a valid JSON object. "
+                "Never return Markdown or explanations "
+                "outside the JSON object."
+            ),
+            temperature=temperature,
+            max_tokens=max_tokens,
+            response_format={
+                "type": "json_object"
             },
-            format="json",
         )
 
     except Exception as exc:
 
         raise RuntimeError(
-            f"Ollama judge failed for "
+            f"OpenRouter judge failed for "
             f"'{judge_model}': {exc}"
         ) from exc
 
-    # Extract response text
-    try:
-
-        raw_content = response[
-            "message"
-        ]["content"]
-
-    except (
-        KeyError,
-        TypeError,
-    ) as exc:
-
-        raise RuntimeError(
-            "Unexpected Ollama judge "
-            "response format."
-        ) from exc
-
+    # --------------------------------------------------------
     # Parse JSON
+    # --------------------------------------------------------
+
     parsed = extract_json(
         raw_content
     )
 
+    # --------------------------------------------------------
     # Validate
+    # --------------------------------------------------------
+
     evaluation = validate_evaluation(
         evaluation=parsed,
         requested_criteria=criteria,
     )
 
-    # Add metadata
-    evaluation["judge_model"] = (
-        judge_model
-    )
+    # --------------------------------------------------------
+    # Deterministic enforcement
+    # --------------------------------------------------------
+
+    if (
+        "instruction_following" in criteria
+        and not deterministic_checks[
+            "passed"
+        ]
+    ):
+
+        failed_checks = []
+
+        for (
+            check_name,
+            check_result,
+        ) in (
+            deterministic_checks[
+                "checks"
+            ].items()
+        ):
+
+            if not check_result.get(
+                "passed",
+                True,
+            ):
+
+                failed_checks.append(
+                    check_name
+                )
+
+        if failed_checks:
+
+            rationale = (
+                "The response failed explicit "
+                "machine-checkable instruction "
+                "constraints: "
+                + ", ".join(
+                    failed_checks
+                )
+                + "."
+            )
+
+        else:
+
+            rationale = (
+                "The response failed one or "
+                "more explicit machine-checkable "
+                "instruction constraints."
+            )
+
+        evaluation[
+            "criteria_scores"
+        ][
+            "instruction_following"
+        ] = {
+            "score": 0,
+            "rationale": rationale,
+        }
+
+        scores = [
+            item["score"]
+            for item in (
+                evaluation[
+                    "criteria_scores"
+                ].values()
+            )
+        ]
+
+        evaluation[
+            "overall_score"
+        ] = round(
+            sum(scores) / len(scores),
+            2,
+        )
+
+    # --------------------------------------------------------
+    # Metadata
+    # --------------------------------------------------------
+
+    evaluation[
+        "judge_model"
+    ] = judge_model
+
+    evaluation[
+        "provider"
+    ] = "openrouter"
+
+    evaluation[
+        "deterministic_checks"
+    ] = deterministic_checks
 
     return evaluation
-
-
-# ============================================================
-# DIRECT TEST
-# ============================================================
-
-if __name__ == "__main__":
-
-    TEST_QUESTION = {
-        "id": "fact_001",
-        "category": "factual_qa",
-        "difficulty": "easy",
-        "source": "custom",
-        "tags": [
-            "geography",
-            "basic_knowledge",
-        ],
-        "prompt": (
-            "What is the capital of Australia?"
-        ),
-        "reference_answer": "Canberra.",
-        "evaluation_criteria": [
-            "correctness",
-            "relevance",
-        ],
-    }
-
-    TEST_RESPONSE = (
-        "The capital of Australia is Canberra."
-    )
-
-    TEST_JUDGE = "gemma:7b"
-
-    print("=" * 60)
-    print("OLLAMA LLM JUDGE TEST")
-    print("=" * 60)
-
-    try:
-
-        result = judge_response(
-            question=TEST_QUESTION,
-            model_response=TEST_RESPONSE,
-            judge_model=TEST_JUDGE,
-        )
-
-        print()
-        print(
-            json.dumps(
-                result,
-                indent=2,
-                ensure_ascii=False,
-            )
-        )
-
-    except Exception as exc:
-
-        print()
-        print("ERROR:")
-        print(exc)
