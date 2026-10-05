@@ -87,3 +87,5 @@ data/judge_reliability_results.jsonl
 
 *.tmp
 *.temp
+# Local Netlify folder
+.netlify

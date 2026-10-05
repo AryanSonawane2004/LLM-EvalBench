@@ -5,9 +5,7 @@ import {
   useState,
 } from "react";
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://127.0.0.1:8000";
+const API_URL = "/.netlify/functions";
 
 type Model = {
   id: string;
@@ -137,7 +135,7 @@ export default function Home() {
 
         const response =
           await fetch(
-            `${API_URL}/api/health`
+            `${API_URL}/health`
           );
 
         setApiOnline(
@@ -236,7 +234,7 @@ export default function Home() {
 
       const response =
         await fetch(
-          `${API_URL}/api/verify`,
+          `${API_URL}/verify`,
           {
             method: "POST",
 
@@ -280,13 +278,12 @@ export default function Home() {
         await response.json();
 
 
-      if (!result.verified) {
-
+      if (!result.valid) {
         throw new Error(
+          result.message ||
           "OpenRouter API key could not be verified."
         );
       }
-
 
       setApiVerified(true);
 
@@ -330,7 +327,7 @@ export default function Home() {
 
       const response =
         await fetch(
-          `${API_URL}/api/models`,
+          `${API_URL}/models`,
           {
             method: "GET",
 
@@ -478,7 +475,7 @@ export default function Home() {
 
       const response =
         await fetch(
-          `${API_URL}/api/run-benchmark`,
+          `${API_URL}/run-benchmark`,
           {
             method: "POST",
 
@@ -635,7 +632,7 @@ export default function Home() {
 
 
         {/* ================================================= */}
-        {/* FASTAPI ERROR                                    */}
+        {/* BACKEND ERROR                                    */}
         {/* ================================================= */}
 
         {!apiOnline && (
@@ -643,11 +640,11 @@ export default function Home() {
           <div className="mb-8 rounded-xl border border-red-900 bg-red-950/30 p-6">
 
             <p className="text-red-300">
-              Unable to connect to FastAPI.
+              Unable to connect to the Netlify backend.
             </p>
 
             <p className="mt-2 text-sm text-red-400">
-              Make sure Uvicorn is running on port 8000.
+              Make sure the Netlify Functions are running.
             </p>
 
           </div>
